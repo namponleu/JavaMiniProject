@@ -74,7 +74,8 @@ public class StudentController {
             }
         } while (option != 0 && option != 99);
     }
-    private void displayTitle(){
+
+    private void displayTitle() {
         System.out.println("\t".repeat(5) + " ██████╗███████╗████████╗ █████╗ ██████╗     ███████╗███╗   ███╗███████╗");
         System.out.println("\t".repeat(5) + "██╔════╝██╔════╝╚══██╔══╝██╔══██╗██╔══██╗    ██╔════╝████╗ ████║██╔════╝");
         System.out.println("\t".repeat(5) + "██║     ███████╗   ██║   ███████║██║  ██║    ███████╗██╔████╔██║███████╗");
@@ -82,18 +83,19 @@ public class StudentController {
         System.out.println("\t".repeat(5) + "╚██████╗███████║   ██║   ██║  ██║██████╔╝    ███████║██║ ╚═╝ ██║███████║");
         System.out.println("\t".repeat(5) + " ╚═════╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═════╝     ╚══════╝╚═╝     ╚═╝╚══════╝");
     }
+
     private void displayMenu() {
         //Menu
         System.out.println("=".repeat(130));
-        Table table  =new Table(3, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
-        table.addCell("[1].ADD NEW STUDENT",new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell("[2].LIST ALL STUDENTS",new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell("[3].COMMIT DATA TO FILE",new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell("[4].SEARCH FOR STUDENT",new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell("[5].UPDATE STUDENT'S INFO BY ID",new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell("[6].DELETE STUDENT'S DATA",new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell("[7].GENERATE DATA TO FILE",new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell("[8].DELETE/CLEAR ALL DATA FROM DATA STORE",new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        Table table = new Table(3, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
+        table.addCell("[1].ADD NEW STUDENT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell("[2].LIST ALL STUDENTS", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell("[3].COMMIT DATA TO FILE", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell("[4].SEARCH FOR STUDENT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell("[5].UPDATE STUDENT'S INFO BY ID", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell("[6].DELETE STUDENT'S DATA", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell("[7].GENERATE DATA TO FILE", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell("[8].DELETE/CLEAR ALL DATA FROM DATA STORE", new CellStyle(CellStyle.HorizontalAlign.CENTER));
         table.addCell("[0,99]. EXIT");
         System.out.println(table.render());
         System.out.println("\t".repeat(25) + "Copyright-CSTAD");
@@ -124,7 +126,7 @@ public class StudentController {
         System.out.print("[+] Subject studied: ");
         String subjects = scanner.nextLine();
 
-        String createAt = "2024-02-02";
+        LocalDate createAt = LocalDate.now();
         // Generate default ID with prefix "CSTAD"
         String id = generateDefaultId();
         Student student = new Student(id, name, dateOfBirth, classroom, subjects, createAt);
@@ -246,6 +248,7 @@ public class StudentController {
             table.addCell("STUDENT'S DATE OF BIRTH ");
             table.addCell("STUDENT CLASSROOM");
             table.addCell("STUDENTS SUBJECT");
+            table.addCell("CREATE AT / UPDATE AT");
             for (int i = startIndex; i < endIndex; i++) {
                 Student student = students.get(i);
                 table.addCell(student.getId());
@@ -253,6 +256,7 @@ public class StudentController {
                 table.addCell(student.getDateOfBirth().toString());
                 table.addCell(student.getClassroom());
                 table.addCell(student.getSubjects());
+                table.addCell(String.valueOf(student.getCreateAt()));
             }
             System.out.println(table.render());
 
@@ -314,11 +318,11 @@ public class StudentController {
         } else {
             displaySearchResults(students);
         }
-        try{
+        try {
 
-            return students.stream().filter(e->e.getId().equals(name)).toList();
-        }catch (NullPointerException exception){
-            System.out.println(STR. "[!] Problem: \{exception.getMessage()}");
+            return students.stream().filter(e -> e.getId().equals(name)).toList();
+        } catch (NullPointerException exception) {
+            System.out.println(STR."[!] Problem: \{exception.getMessage()}");
             return new ArrayList<>();
         }
     }
@@ -426,41 +430,59 @@ public class StudentController {
     }
 
     private void generateDataToFile() {
-    System.out.print("[+] Number of objects you want to generate (100M - 100_000_000): ");
-    int numRecords = Integer.parseInt(scanner.nextLine());
+        System.out.print("[+] Number of objects you want to generate (100M - 100_000_000): ");
+        int numRecords = Integer.parseInt(scanner.nextLine());
 
-    long startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
 
-    // Define the number of threads to use
-    int numThreads = Runtime.getRuntime().availableProcessors();
-    ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
+        // Define the number of threads to use
+        int numThreads = Runtime.getRuntime().availableProcessors();
+        ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
 
-    // Divide the total number of records by the number of threads
-    int recordsPerThread = numRecords / numThreads;
+        // Divide the total number of records by the number of threads
+        int recordsPerThread = numRecords / numThreads;
 
-    // Submit tasks to the executor
-    for (int i = 0; i < numThreads; i++) {
-        int startIndex = i * recordsPerThread;
-        int endIndex = (i == numThreads - 1) ? numRecords : (i + 1) * recordsPerThread;
-        executorService.submit(() -> generateRecords(startIndex, endIndex));
+        // Submit tasks to the executor
+        for (int i = 0; i < numThreads; i++) {
+            int startIndex = i * recordsPerThread;
+            int endIndex = (i == numThreads - 1) ? numRecords : (i + 1) * recordsPerThread;
+            executorService.submit(() -> generateRecords(startIndex, endIndex));
+        }
+
+        // Shutdown the executor after all tasks are completed
+        executorService.shutdown();
+
+        // Wait for all tasks to finish
+        while (!executorService.isTerminated()) {
+            // Do nothing
+        }
+
+        long endTime = System.currentTimeMillis();
+        double elapsedTime = (endTime - startTime) / 10000.00;
+
+        System.out.printf("[+] SPENT TIME FOR WRITING DATA: %.3f S%n", elapsedTime);
+        System.out.printf("[+] WROTE DATA %d RECORD SUCCESSFULLY.%n", numRecords);
     }
-
-    // Shutdown the executor after all tasks are completed
-    executorService.shutdown();
-
-    // Wait for all tasks to finish
-    while (!executorService.isTerminated()) {
-        // Do nothing
-    }
-
-    long endTime = System.currentTimeMillis();
-    double elapsedTime = (endTime - startTime) / 10000.0;
-
-    System.out.printf("[+] SPENT TIME FOR WRITING DATA: %.3f S%n", elapsedTime);
-    System.out.printf("[+] WROTE DATA %d RECORD SUCCESSFULLY.%n", numRecords);
-}
 
     // Method to generate records for a specific range
+//    private void generateRecords(int startIndex, int endIndex) {
+//        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true), 1024 * 1024)) {
+//            for (int i = startIndex; i < endIndex; i++) {
+//                // Generate default ID with prefix "CSTAD"
+//                String id = generateDefaultId();
+//                String name = "Student" + (i + 1);
+//                LocalDate dateOfBirth = LocalDate.of(2000 + i % 20, (i % 12) + 1, (i % 28) + 1); // Random date of birth
+//                String classroom = "Class" + (i % 5 + 1);
+//                String subjects = "Subject" + (i % 8 + 1);
+//                String createAt = "2024-05-05";
+//
+//                writer.write(String.format("%s,%s,%s,%s,%s,%s%n",
+//                        id, name, dateOfBirth, classroom, subjects,createAt));
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
     private void generateRecords(int startIndex, int endIndex) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true), 1024 * 1024)) {
             for (int i = startIndex; i < endIndex; i++) {
@@ -470,12 +492,14 @@ public class StudentController {
                 LocalDate dateOfBirth = LocalDate.of(2000 + i % 20, (i % 12) + 1, (i % 28) + 1); // Random date of birth
                 String classroom = "Class" + (i % 5 + 1);
                 String subjects = "Subject" + (i % 8 + 1);
+                LocalDate createAt = LocalDate.now(); // Corrected creation date
 
-                writer.write(String.format("%s,%s,%s,%s,%s%n",
-                        id, name, dateOfBirth, classroom, subjects));
+                writer.write(String.format("%s,%s,%s,%s,%s,%s%n",
+                        id, name, dateOfBirth, classroom, subjects, createAt));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 }
