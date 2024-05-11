@@ -6,9 +6,9 @@ import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static fileIO.controller.StudentController.generateDefaultId;
 
 public class StudentServiceImpl implements StudentService {
     private final String FILE_NAME = "students.txt";
@@ -22,46 +22,29 @@ public class StudentServiceImpl implements StudentService {
         String line = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
             while ((line = reader.readLine()) != null) {
-                String[] data = line.split(",");
-                String id = data[0];
-                String name = data[1];
-                LocalDate dateOfBirth = LocalDate.parse(data[2]);
-                String classroom = data[3];
-                String subjects = data[4];
-                LocalDate createAt = LocalDate.parse(data[5]); // Parse createAt field
+                String[] data = line.split(",", 5); // Split into at most 5 parts
+                try {
+                    String id = data[0];
+                    String name = data[1];
+                    LocalDate dateOfBirth = LocalDate.parse(data[2]);
+                    String classroom = data[3];
+                    String[] subjectsData = data[4].split(","); // Split subjects into individual parts
+                    String subjects = String.join(",", Arrays.copyOfRange(subjectsData, 0, subjectsData.length - 1)); // Concatenate subjects
+                    LocalDate createAt = LocalDate.parse(subjectsData[subjectsData.length - 1]); // Parse createAt field from the last part
 
-                Student student = new Student(id, name, dateOfBirth, classroom, subjects, createAt);
-                students.add(student);
+                    Student student = new Student(id, name, dateOfBirth, classroom, subjects, createAt);
+                    students.add(student);
+                } catch (DateTimeParseException | ArrayIndexOutOfBoundsException e) {
+                    // Handle parsing errors and skip the line
+                    System.err.println("Error parsing line: " + line);
+                    e.printStackTrace();
+                }
             }
-        } catch (DateTimeParseException | ArrayIndexOutOfBoundsException | IOException e) {
-            // Handle parsing errors
-            System.err.println("Error parsing line: " + line);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-
-//    private void readDataFromFile() {
-//        String line = null;
-//        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
-//            while ((line = reader.readLine()) != null) {
-//                String[] data = line.split(",");
-//                String id = data[0];
-//                String name = data[1];
-//                LocalDate dateOfBirth = LocalDate.parse(data[2]);
-//                String classroom = data[3];
-//                String subjects = data[4];
-//                String createAt = data[5];
-//
-//                Student student = new Student(id, name, dateOfBirth, classroom, subjects, createAt);
-//                students.add(student);
-//            }
-//        } catch (DateTimeParseException | ArrayIndexOutOfBoundsException | IOException e) {
-//            // Handle parsing errors
-//            System.err.println("Error parsing line: " + line);
-//            e.printStackTrace();
-//        }
-//    }
 
 
     private void writeDataToFile() {
@@ -164,7 +147,6 @@ public class StudentServiceImpl implements StudentService {
 
             if (updated) {
                 writeDataToFile();
-                System.out.println("Your update is successful.");
                 return updatedStudent;
             } else {
                 System.out.println("No student found with the given ID.");

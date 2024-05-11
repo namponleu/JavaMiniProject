@@ -174,9 +174,7 @@ public class StudentController {
                 case "p":
                     if (currentPage > 1) {
                         currentPage--;
-//                        System.out.println("[!] FIRST PAGE << [*] STUDENTS' DATA");
                     } else {
-//                        System.out.println("Already on the first page.");
                         System.out.println("[!] FIRST PAGE << [*] STUDENTS' DATA");
 
                     }
@@ -186,7 +184,6 @@ public class StudentController {
                         currentPage++;
                         System.out.println("[!] LAST PAGE << [*] STUDENTS' DATA");
                     } else {
-//                        System.out.println("Already on the last page.");
                         System.out.println("[!] LAST PAGE << [*] STUDENTS' DATA");
 
                     }
@@ -377,8 +374,9 @@ public class StudentController {
             System.out.print("[+] Subject studied: ");
             String subjects = scanner.nextLine();
 
+            LocalDate createAt = LocalDate.now();
             // Create a new Student object with updated details
-            Student updatedStudent = new Student(id, name, dob, classroom, subjects, deleteStudentData().getCreateAt());
+            Student updatedStudent = new Student(id, name, dob, classroom, subjects,createAt);
 
             // Call the service method to update the student
             Student updated = studentService.updateStudentById(id, updatedStudent);
@@ -464,42 +462,25 @@ public class StudentController {
         System.out.printf("[+] WROTE DATA %d RECORD SUCCESSFULLY.%n", numRecords);
     }
 
-    // Method to generate records for a specific range
-//    private void generateRecords(int startIndex, int endIndex) {
-//        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true), 1024 * 1024)) {
-//            for (int i = startIndex; i < endIndex; i++) {
-//                // Generate default ID with prefix "CSTAD"
-//                String id = generateDefaultId();
-//                String name = "Student" + (i + 1);
-//                LocalDate dateOfBirth = LocalDate.of(2000 + i % 20, (i % 12) + 1, (i % 28) + 1); // Random date of birth
-//                String classroom = "Class" + (i % 5 + 1);
-//                String subjects = "Subject" + (i % 8 + 1);
-//                String createAt = "2024-05-05";
-//
-//                writer.write(String.format("%s,%s,%s,%s,%s,%s%n",
-//                        id, name, dateOfBirth, classroom, subjects,createAt));
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-    private void generateRecords(int startIndex, int endIndex) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true), 1024 * 1024)) {
-            for (int i = startIndex; i < endIndex; i++) {
-                // Generate default ID with prefix "CSTAD"
-                String id = generateDefaultId();
-                String name = "Student" + (i + 1);
-                LocalDate dateOfBirth = LocalDate.of(2000 + i % 20, (i % 12) + 1, (i % 28) + 1); // Random date of birth
-                String classroom = "Class" + (i % 5 + 1);
-                String subjects = "Subject" + (i % 8 + 1);
-                LocalDate createAt = LocalDate.now(); // Corrected creation date
+private void generateRecords(int startIndex, int endIndex) {
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true), 1024 * 1024)) {
+        for (int i = startIndex; i < endIndex; i++) {
+            // Generate default ID with prefix "CSTAD"
+            String id = generateDefaultId();
+            String name = "Student" + (i + 1);
+            LocalDate dateOfBirth = LocalDate.of(2000 + i % 20, (i % 12) + 1, (i % 28) + 1); // Random date of birth
+            String classroom = "Class" + (i % 5 + 1);
+            String subjects = "Subject" + (i % 8 + 1);
+            LocalDate createAt = LocalDate.now(); // Corrected creation date
 
-                writer.write(String.format("%s,%s,%s,%s,%s,%s%n",
-                        id, name, dateOfBirth, classroom, subjects, createAt));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+            // Format the record with commas and write to the file
+            String record = String.join(",", id, name, dateOfBirth.toString(), classroom, subjects, createAt.toString());
+            writer.write(record + System.lineSeparator());
         }
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+}
+
 
 }
