@@ -8,15 +8,17 @@ public class Student {
     private LocalDate dateOfBirth;
     private String classroom;
     private String subjects;
+    private String createAt;
 
     public Student(){}
 
-    public Student(String id, String name, LocalDate dateOfBirth, String classroom, String subjects) {
+    public Student(String id, String name, LocalDate dateOfBirth, String classroom, String subjects, String createAt) {
         this.id = id;
         this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.classroom = classroom;
         this.subjects = subjects;
+        this.createAt = createAt;
     }
 
     public String getId() {
@@ -59,14 +61,11 @@ public class Student {
         this.subjects = subjects;
     }
 
-    @Override
-    public String toString() {
-        return "Student{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", dateOfBirth=" + dateOfBirth +
-                ", classroom='" + classroom + '\'' +
-                ", subjects='" + subjects + '\'' +
-                '}';
+    public String getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(String createAt) {
+        this.createAt = createAt;
     }
 }

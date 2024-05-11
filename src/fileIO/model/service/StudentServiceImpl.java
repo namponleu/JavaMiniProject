@@ -4,8 +4,11 @@ import fileIO.model.Student;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static fileIO.controller.StudentController.generateDefaultId;
 
 public class StudentServiceImpl implements StudentService {
     private final String FILE_NAME = "students.txt";
@@ -17,8 +20,8 @@ public class StudentServiceImpl implements StudentService {
     }
 
     private void readDataFromFile() {
+        String line = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
-            String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
                 String id = data[0];
@@ -26,23 +29,32 @@ public class StudentServiceImpl implements StudentService {
                 LocalDate dateOfBirth = LocalDate.parse(data[2]);
                 String classroom = data[3];
                 String subjects = data[4];
-                Student student = new Student(id, name, dateOfBirth, classroom, subjects);
+                String createAt = data[5];
+                Student student = new Student(id, name, dateOfBirth, classroom, subjects, createAt);
                 students.add(student);
             }
-        } catch (IOException e) {
+        } catch (DateTimeParseException | ArrayIndexOutOfBoundsException | IOException e) {
+            // Handle parsing errors
+            System.err.println("Error parsing line: " + line);
             e.printStackTrace();
         }
     }
 
+
+
+
     private void writeDataToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
+            writer.flush();
             for (Student student : students) {
-                writer.write(String.format("%s,%s,%s,%s,%s%n",
+                writer.write(String.format("%s,%s,%s,%s,%s,%s%n",
                         student.getId(),
                         student.getName(),
                         student.getDateOfBirth(),
                         student.getClassroom(),
-                        student.getSubjects()));
+                        student.getSubjects(),
+                        student.getCreateAt(),
+                        student.getCreateAt()));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -151,6 +163,30 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void generateData(int numRecords) {
-        // Implement if needed
+        long startTime = System.currentTimeMillis();
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true), 1024 * 1024)) {
+            for (int i = 0; i < numRecords; i++) {
+                // Generate default ID with prefix "CSTAD"
+                String id = generateDefaultId();
+                String name = "Student" + (i + 1);
+                LocalDate dateOfBirth = LocalDate.of(2000 + i % 20, (i % 12) + 1, (i % 28) + 1); // Random date of birth
+                String classroom = "Class" + (i % 5 + 1);
+                String subjects = "Subject" + (i % 8 + 1);
+//                String creatAt = "CreateAt" +
+                String createAt = "2024-02-02";
+
+                writer.write(String.format("%s,%s,%s,%s,%s%n",
+                        id, name, dateOfBirth, classroom, subjects,createAt));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        long endTime = System.currentTimeMillis();
+        double elapsedTime = (endTime - startTime) / 1000.0; // Time in seconds
+
+        System.out.printf("[+] SPENT TIME FOR WRITING DATA: %.3f S%n", elapsedTime);
+        System.out.printf("[+] WROTE DATA %d RECORD SUCCESSFULLY.%n", numRecords);
     }
 }

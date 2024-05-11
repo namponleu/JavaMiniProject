@@ -7,17 +7,27 @@ import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.ShownBorders;
 import org.nocrala.tools.texttablefmt.Table;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 import static java.lang.StringTemplate.STR;
 
 public class StudentController {
     private final StudentService studentService;
     private final Scanner scanner;
+    private final String FILE_NAME = "students.txt";
+
+    private int currentPage = 1;
+    private static final int RECORDS_PER_PAGE = 10;
 
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
@@ -113,64 +123,169 @@ public class StudentController {
         System.out.println("[!] YOU CAN INSERT MULTI SUBJECTS BY SPLITTING [,] SYMBOL (S1, 52)");
         System.out.print("[+] Subject studied: ");
         String subjects = scanner.nextLine();
+
+        String createAt = "2024-02-02";
         // Generate default ID with prefix "CSTAD"
         String id = generateDefaultId();
-        Student student = new Student(id, name, dateOfBirth, classroom, subjects);
+        Student student = new Student(id, name, dateOfBirth, classroom, subjects, createAt);
         studentService.addNewStudent(student);
     }
 
-    private String generateDefaultId() {
-        int randomNumber = new Random().nextInt(100000) + 1;
+    public static String generateDefaultId() {
+        int randomNumber = new Random().nextInt(10000) + 1;
+//        String createAt = "2024-02-02";
         return String.format("%dCSTAD", randomNumber);
     }
 
-    private void listAllStudents() {
+    private List<Student> listAllStudents() {
         List<Student> students = studentService.listAllStudents();
-        System.out.println("[!] LAST PAGE <<");
-        System.out.println("[*] STUDENTS' DATA");
-        Table table = new Table(5,BorderStyle.UNICODE_BOX_HEAVY_BORDER,ShownBorders.ALL);
+        int totalPages = (int) Math.ceil((double) students.size() / RECORDS_PER_PAGE);
+
+        while (true) {
+            int startIndex = (currentPage - 1) * RECORDS_PER_PAGE;
+            int endIndex = Math.min(startIndex + RECORDS_PER_PAGE, students.size());
+
+//            System.out.println("[!] LAST PAGE << [*] STUDENTS' DATA");
+            Table table = new Table(6, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
+            table.addCell("ID");
+            table.addCell("STUDENT'S NAME");
+            table.addCell("STUDENT'S DATE OF BIRTH ");
+            table.addCell("STUDENT CLASSROOM");
+            table.addCell("STUDENTS SUBJECT");
+            table.addCell("CREATE AT / UPDATE AT");
+            for (int i = startIndex; i < endIndex; i++) {
+                Student student = students.get(i);
+                table.addCell(student.getId());
+                table.addCell(student.getName());
+                table.addCell(student.getDateOfBirth().toString());
+                table.addCell(student.getClassroom());
+                table.addCell(student.getSubjects());
+                table.addCell(student.getCreateAt().toString());
+            }
+            System.out.println(table.render());
+
+            System.out.println("[*] Page Number: " + currentPage + "      [*] Actual record: " + (endIndex - startIndex) + "        [*] All Record: " + students.size());
+            System.out.print("[+] Previous (P/p) - [+] Next (n/N) - [+] Back (B/b): ");
+            String choice = scanner.nextLine().trim().toLowerCase();
+
+            switch (choice) {
+                case "p":
+                    if (currentPage > 1) {
+                        currentPage--;
+//                        System.out.println("[!] FIRST PAGE << [*] STUDENTS' DATA");
+                    } else {
+//                        System.out.println("Already on the first page.");
+                        System.out.println("[!] FIRST PAGE << [*] STUDENTS' DATA");
+
+                    }
+                    break;
+                case "n":
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        System.out.println("[!] LAST PAGE << [*] STUDENTS' DATA");
+                    } else {
+//                        System.out.println("Already on the last page.");
+                        System.out.println("[!] LAST PAGE << [*] STUDENTS' DATA");
+
+                    }
+                    break;
+                case "b":
+                    return students;
+                default:
+                    System.out.println("Invalid choice! Please try again.");
+            }
+        }
+    }
+
+
+    private void displaySearchResults(List<Student> students) {
+        int startIndex = (currentPage - 1) * RECORDS_PER_PAGE;
+        int endIndex = Math.min(startIndex + RECORDS_PER_PAGE, students.size());
+
+        System.out.println("[!] LAST PAGE << [*] STUDENTS' DATA");
+        Table table = new Table(6, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
         table.addCell("ID");
         table.addCell("STUDENT'S NAME");
-        table.addCell(" STUDENT'S DATE OF BIRTH");
-        table.addCell(" STUDENTS CLASS");
-        table.addCell("STUDENT SUBJECT");
-        for(Student student : students){
-            table.addCell(student.getId());
-            table.addCell(student.getName());
-            table.addCell(student.getDateOfBirth().toString());
-            table.addCell(student.getClassroom());
-            table.addCell(student.getSubjects());
-        }
-        System.out.println(table.render());
-        System.out.println("[*] Page Number: 1      [*] Actual record: " + students.size() + "        [*] All Record: " + students.size());
-        System.out.print("[+] Insert to Navigate [p/N]: ");
-        scanner.nextLine();
-    }
-    private void displaySearchResults(List<Student> students) {
-        System.out.println("[!] LAST PAGE << [*] STUDENTS' DATA");
-        Table table = new Table(5,BorderStyle.UNICODE_BOX_HEAVY_BORDER,ShownBorders.ALL);
-        table.addCell("ID");
-        table.addCell(" STUDENT'S NAME");
         table.addCell("STUDENT'S DATE OF BIRTH ");
         table.addCell("STUDENT CLASSROOM");
         table.addCell("STUDENTS SUBJECT");
-        for(Student student: students){
+        table.addCell("CREATE AT / UPDATE AT");
+        for (int i = startIndex; i < endIndex; i++) {
+            Student student = students.get(i);
             table.addCell(student.getId());
             table.addCell(student.getName());
             table.addCell(student.getDateOfBirth().toString());
             table.addCell(student.getClassroom());
             table.addCell(student.getSubjects());
+            table.addCell(student.getCreateAt().toString());
         }
         System.out.println(table.render());
-        System.out.println("[*] Page Number: 1      [*] Actual record: " + students.size() + "        [*] All Record: " + students.size());
-        System.out.print("[+] Insert to Navigate [p/N]: ");
+
+        System.out.println("[*] Page Number: " + currentPage + "      [*] Actual record: " + (endIndex - startIndex) + "        [*] All Record: " + students.size());
+        System.out.print("[+] Previous (P/p) - [+] Next (n/N) - [+] Back (B/b): ");
         scanner.nextLine();
     }
 
+    private void listAndDisplayStudents() {
+        List<Student> students = listAllStudents();
+        displaySearchResults(students);
+    }
+
+    private void displayStudentsOnPage() {
+        List<Student> students = studentService.listAllStudents();
+        int totalPages = (int) Math.ceil((double) students.size() / RECORDS_PER_PAGE);
+
+        while (true) {
+            int startIndex = (currentPage - 1) * RECORDS_PER_PAGE;
+            int endIndex = Math.min(startIndex + RECORDS_PER_PAGE, students.size());
+
+            System.out.println("[!] LAST PAGE << [*] STUDENTS' DATA");
+            Table table = new Table(6, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
+            table.addCell("ID");
+            table.addCell("STUDENT'S NAME");
+            table.addCell("STUDENT'S DATE OF BIRTH ");
+            table.addCell("STUDENT CLASSROOM");
+            table.addCell("STUDENTS SUBJECT");
+            for (int i = startIndex; i < endIndex; i++) {
+                Student student = students.get(i);
+                table.addCell(student.getId());
+                table.addCell(student.getName());
+                table.addCell(student.getDateOfBirth().toString());
+                table.addCell(student.getClassroom());
+                table.addCell(student.getSubjects());
+            }
+            System.out.println(table.render());
+
+            System.out.println("[*] Page Number: " + currentPage + "      [*] Actual record: " + (endIndex - startIndex) + "        [*] All Record: " + students.size());
+            System.out.print("[+] Previous (P/p) - [+] Next (n/N) - [+] Back (B/b): ");
+            String choice = scanner.nextLine().trim().toLowerCase();
+
+            switch (choice) {
+                case "p":
+                    if (currentPage > 1) {
+                        currentPage--;
+                    } else {
+                        System.out.println("Already on the first page.");
+                    }
+                    break;
+                case "n":
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                    } else {
+                        System.out.println("Already on the last page.");
+                    }
+                    break;
+                case "b":
+                    return;
+                default:
+                    System.out.println("Invalid choice! Please try again.");
+            }
+        }
+    }
+
+
     private void searchForStudent() {
-        System.out.println("....................");
         System.out.println("[+] SEARCHING STUDENT");
-        System.out.println("....................");
         System.out.println("1. SEARCH BY NAME");
         System.out.println("2. SEARCH BY ID");
 //        System.out.print("- (ВАСК/B) ТО ВАСК: ");
@@ -259,7 +374,7 @@ public class StudentController {
             String subjects = scanner.nextLine();
 
             // Create a new Student object with updated details
-            Student updatedStudent = new Student(id, name, dob, classroom, subjects);
+            Student updatedStudent = new Student(id, name, dob, classroom, subjects, deleteStudentData().getCreateAt());
 
             // Call the service method to update the student
             Student updated = studentService.updateStudentById(id, updatedStudent);
@@ -294,10 +409,6 @@ public class StudentController {
         return deletedStudent;
     }
 
-    private void generateDataToFile() {
-        // Placeholder for generating data to file
-        System.out.println("Generating data to file...");
-    }
 
     private void deleteAllData() {
         System.out.print("Are you sure you want to delete all data? (Y/N) :");
@@ -311,6 +422,60 @@ public class StudentController {
             System.out.println("Operation canceled.");
         } else {
             System.out.println("Invalid choice. Please enter Y or N.");
+        }
+    }
+
+    private void generateDataToFile() {
+    System.out.print("[+] Number of objects you want to generate (100M - 100_000_000): ");
+    int numRecords = Integer.parseInt(scanner.nextLine());
+
+    long startTime = System.currentTimeMillis();
+
+    // Define the number of threads to use
+    int numThreads = Runtime.getRuntime().availableProcessors();
+    ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
+
+    // Divide the total number of records by the number of threads
+    int recordsPerThread = numRecords / numThreads;
+
+    // Submit tasks to the executor
+    for (int i = 0; i < numThreads; i++) {
+        int startIndex = i * recordsPerThread;
+        int endIndex = (i == numThreads - 1) ? numRecords : (i + 1) * recordsPerThread;
+        executorService.submit(() -> generateRecords(startIndex, endIndex));
+    }
+
+    // Shutdown the executor after all tasks are completed
+    executorService.shutdown();
+
+    // Wait for all tasks to finish
+    while (!executorService.isTerminated()) {
+        // Do nothing
+    }
+
+    long endTime = System.currentTimeMillis();
+    double elapsedTime = (endTime - startTime) / 10000.0;
+
+    System.out.printf("[+] SPENT TIME FOR WRITING DATA: %.3f S%n", elapsedTime);
+    System.out.printf("[+] WROTE DATA %d RECORD SUCCESSFULLY.%n", numRecords);
+}
+
+    // Method to generate records for a specific range
+    private void generateRecords(int startIndex, int endIndex) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true), 1024 * 1024)) {
+            for (int i = startIndex; i < endIndex; i++) {
+                // Generate default ID with prefix "CSTAD"
+                String id = generateDefaultId();
+                String name = "Student" + (i + 1);
+                LocalDate dateOfBirth = LocalDate.of(2000 + i % 20, (i % 12) + 1, (i % 28) + 1); // Random date of birth
+                String classroom = "Class" + (i % 5 + 1);
+                String subjects = "Subject" + (i % 8 + 1);
+
+                writer.write(String.format("%s,%s,%s,%s,%s%n",
+                        id, name, dateOfBirth, classroom, subjects));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
