@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 
 import static java.lang.StringTemplate.STR;
@@ -24,7 +26,7 @@ import static java.lang.StringTemplate.STR;
 public class StudentController {
     private final StudentService studentService;
     private final Scanner scanner;
-    private final String FILE_NAME = "students.txt";
+    private final String FILE_NAME = "students.csv";
 
     private int currentPage = 1;
     private static final int RECORDS_PER_PAGE = 10;
@@ -427,60 +429,55 @@ public class StudentController {
         }
     }
 
-    private void generateDataToFile() {
-        System.out.print("[+] Number of objects you want to generate (100M - 100_000_000): ");
-        int numRecords = Integer.parseInt(scanner.nextLine());
 
-        long startTime = System.currentTimeMillis();
+//    private void generateDataToFile() {
+//        System.out.print("[+] Number of objects you want to generate (100M - 100_000_000): ");
+//        int numRecords = Integer.parseInt(scanner.nextLine());
+//
+//        long startTime = System.currentTimeMillis();
+//
+//        // Call generateRecords method from StudentServiceImpl
+//        studentService.generateRecords(0, numRecords);
+//
+//        long endTime = System.currentTimeMillis();
+//        double elapsedTime = (endTime - startTime) / 10000.0;
+//
+//        System.out.printf("[+] SPENT TIME FOR WRITING DATA: %.3f S%n", elapsedTime);
+//        System.out.printf("[+] WROTE DATA %d RECORD SUCCESSFULLY.%n", numRecords);
+//    }
+private void generateDataToFile() {
+    System.out.print("[+] Number of objects you want to generate (100M - 100_000_000): ");
+    int numRecords = Integer.parseInt(scanner.nextLine());
 
-        // Define the number of threads to use
-        int numThreads = Runtime.getRuntime().availableProcessors();
-        ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
+    long startTime = System.currentTimeMillis();
 
-        // Divide the total number of records by the number of threads
-        int recordsPerThread = numRecords / numThreads;
+    // Define the number of threads to use
+    int numThreads = Runtime.getRuntime().availableProcessors();
+    ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
 
-        // Submit tasks to the executor
-        for (int i = 0; i < numThreads; i++) {
-            int startIndex = i * recordsPerThread;
-            int endIndex = (i == numThreads - 1) ? numRecords : (i + 1) * recordsPerThread;
-            executorService.submit(() -> generateRecords(startIndex, endIndex));
-        }
+    // Divide the total number of records by the number of threads
+    int recordsPerThread = numRecords / numThreads;
 
-        // Shutdown the executor after all tasks are completed
-        executorService.shutdown();
-
-        // Wait for all tasks to finish
-        while (!executorService.isTerminated()) {
-            // Do nothing
-        }
-
-        long endTime = System.currentTimeMillis();
-        double elapsedTime = (endTime - startTime) / 10000.00;
-
-        System.out.printf("[+] SPENT TIME FOR WRITING DATA: %.3f S%n", elapsedTime);
-        System.out.printf("[+] WROTE DATA %d RECORD SUCCESSFULLY.%n", numRecords);
+    // Submit tasks to the executor
+    for (int i = 0; i < numThreads; i++) {
+        int startIndex = i * recordsPerThread;
+        int endIndex = (i == numThreads - 1) ? numRecords : (i + 1) * recordsPerThread;
+        executorService.submit(() -> studentService.generateRecords(startIndex, endIndex));
     }
 
-private void generateRecords(int startIndex, int endIndex) {
-    try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true), 1024 * 1024)) {
-        for (int i = startIndex; i < endIndex; i++) {
-            // Generate default ID with prefix "CSTAD"
-            String id = generateDefaultId();
-            String name = "Student" + (i + 1);
-            LocalDate dateOfBirth = LocalDate.of(2000 + i % 20, (i % 12) + 1, (i % 28) + 1); // Random date of birth
-            String classroom = "Class" + (i % 5 + 1);
-            String subjects = "Subject" + (i % 8 + 1);
-            LocalDate createAt = LocalDate.now(); // Corrected creation date
+    // Shutdown the executor after all tasks are completed
+    executorService.shutdown();
 
-            // Format the record with commas and write to the file
-            String record = String.join(",", id, name, dateOfBirth.toString(), classroom, subjects, createAt.toString());
-            writer.write(record + System.lineSeparator());
-        }
-    } catch (IOException e) {
-        e.printStackTrace();
+    // Wait for all tasks to finish
+    while (!executorService.isTerminated()) {
+        // Do nothing
     }
+
+    long endTime = System.currentTimeMillis();
+    double elapsedTime = (endTime - startTime) / 10000.00;
+
+    System.out.printf("[+] SPENT TIME FOR WRITING DATA: %.3f S%n", elapsedTime);
+    System.out.printf("[+] WROTE DATA %d RECORD SUCCESSFULLY.%n", numRecords);
 }
-
 
 }

@@ -9,9 +9,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static fileIO.controller.StudentController.generateDefaultId;
+
 
 public class StudentServiceImpl implements StudentService {
-    private final String FILE_NAME = "students.txt";
+    private final String FILE_NAME = "students.csv";
     private final List<Student> students;
 
     public StudentServiceImpl() {
@@ -87,10 +89,7 @@ public class StudentServiceImpl implements StudentService {
         // Implement if using transaction manager
     }
 
-    @Override
-    public void deleteDataFromFile() {
-        // Implement if needed
-    }
+
 
     @Override
     public List<Student> searchStudentById(String id) {
@@ -165,7 +164,26 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public void generateData(int numRecords) {
+    public void generateRecords(int startIndex, int endIndex) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
+            for (int i = startIndex; i < endIndex; i++) {
+                // Generate student data (ID, name, date of birth, etc.)
+                String id = generateDefaultId();
+                String name = "Student" + (i + 1);
+                LocalDate dateOfBirth = LocalDate.of(2000 + i % 20, (i % 12) + 1, (i % 28) + 1); // Random date of birth
+                String classroom = "Class" + (i % 5 + 1);
+                String subjects = "Subject" + (i % 8 + 1);
+                LocalDate createAt = LocalDate.now(); // Corrected creation date
 
+                // Format the record with commas and write to the file
+                String record = String.format("%s,%s,%s,%s,%s,%s",
+                        id, name, dateOfBirth, classroom, subjects, createAt);
+                writer.write(record + System.lineSeparator());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
+
 }
