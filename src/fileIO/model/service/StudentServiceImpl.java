@@ -11,9 +11,8 @@ import java.util.List;
 
 import static fileIO.controller.StudentController.generateDefaultId;
 
-
 public class StudentServiceImpl implements StudentService {
-    private final String FILE_NAME = "students.csv";
+    private final String FILE_NAME = "students.txt";
     private final List<Student> students;
 
     public StudentServiceImpl() {

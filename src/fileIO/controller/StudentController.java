@@ -26,7 +26,7 @@ import static java.lang.StringTemplate.STR;
 public class StudentController {
     private final StudentService studentService;
     private final Scanner scanner;
-    private final String FILE_NAME = "students.csv";
+    private final String FILE_NAME = "students.txt";
 
     private int currentPage = 1;
     private static final int RECORDS_PER_PAGE = 10;
