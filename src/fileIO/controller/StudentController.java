@@ -176,6 +176,7 @@ public class StudentController {
                 case "p":
                     if (currentPage > 1) {
                         currentPage--;
+                        System.out.println("[!] FIRST PAGE << [*] STUDENTS' DATA");
                     } else {
                         System.out.println("[!] FIRST PAGE << [*] STUDENTS' DATA");
 
@@ -225,67 +226,8 @@ public class StudentController {
         System.out.println("[*] Page Number: " + currentPage + "      [*] Actual record: " + (endIndex - startIndex) + "        [*] All Record: " + students.size());
         System.out.print("[+] Previous (P/p) - [+] Next (n/N) - [+] Back (B/b): ");
         scanner.nextLine();
+
     }
-
-    private void listAndDisplayStudents() {
-        List<Student> students = listAllStudents();
-        displaySearchResults(students);
-    }
-
-    private void displayStudentsOnPage() {
-        List<Student> students = studentService.listAllStudents();
-        int totalPages = (int) Math.ceil((double) students.size() / RECORDS_PER_PAGE);
-
-        while (true) {
-            int startIndex = (currentPage - 1) * RECORDS_PER_PAGE;
-            int endIndex = Math.min(startIndex + RECORDS_PER_PAGE, students.size());
-
-            System.out.println("[!] LAST PAGE << [*] STUDENTS' DATA");
-            Table table = new Table(6, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
-            table.addCell("ID");
-            table.addCell("STUDENT'S NAME");
-            table.addCell("STUDENT'S DATE OF BIRTH ");
-            table.addCell("STUDENT CLASSROOM");
-            table.addCell("STUDENTS SUBJECT");
-            table.addCell("CREATE AT / UPDATE AT");
-            for (int i = startIndex; i < endIndex; i++) {
-                Student student = students.get(i);
-                table.addCell(student.getId());
-                table.addCell(student.getName());
-                table.addCell(student.getDateOfBirth().toString());
-                table.addCell(student.getClassroom());
-                table.addCell(student.getSubjects());
-                table.addCell(String.valueOf(student.getCreateAt()));
-            }
-            System.out.println(table.render());
-
-            System.out.println("[*] Page Number: " + currentPage + "      [*] Actual record: " + (endIndex - startIndex) + "        [*] All Record: " + students.size());
-            System.out.print("[+] Previous (P/p) - [+] Next (n/N) - [+] Back (B/b): ");
-            String choice = scanner.nextLine().trim().toLowerCase();
-
-            switch (choice) {
-                case "p":
-                    if (currentPage > 1) {
-                        currentPage--;
-                    } else {
-                        System.out.println("Already on the first page.");
-                    }
-                    break;
-                case "n":
-                    if (currentPage < totalPages) {
-                        currentPage++;
-                    } else {
-                        System.out.println("Already on the last page.");
-                    }
-                    break;
-                case "b":
-                    return;
-                default:
-                    System.out.println("Invalid choice! Please try again.");
-            }
-        }
-    }
-
 
     private void searchForStudent() {
         System.out.println("[+] SEARCHING STUDENT");
@@ -430,21 +372,7 @@ public class StudentController {
     }
 
 
-//    private void generateDataToFile() {
-//        System.out.print("[+] Number of objects you want to generate (100M - 100_000_000): ");
-//        int numRecords = Integer.parseInt(scanner.nextLine());
-//
-//        long startTime = System.currentTimeMillis();
-//
-//        // Call generateRecords method from StudentServiceImpl
-//        studentService.generateRecords(0, numRecords);
-//
-//        long endTime = System.currentTimeMillis();
-//        double elapsedTime = (endTime - startTime) / 10000.0;
-//
-//        System.out.printf("[+] SPENT TIME FOR WRITING DATA: %.3f S%n", elapsedTime);
-//        System.out.printf("[+] WROTE DATA %d RECORD SUCCESSFULLY.%n", numRecords);
-//    }
+
 private void generateDataToFile() {
     System.out.print("[+] Number of objects you want to generate (100M - 100_000_000): ");
     int numRecords = Integer.parseInt(scanner.nextLine());

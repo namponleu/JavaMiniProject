@@ -80,12 +80,12 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void commitDataToFile() {
-        writeDataToFile();
+        //write code
     }
 
     @Override
     public void commitDataFromTransaction() {
-        // Implement if using transaction manager
+        // write code
     }
 
 
