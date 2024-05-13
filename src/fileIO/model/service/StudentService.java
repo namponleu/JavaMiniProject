@@ -10,6 +10,7 @@ public interface StudentService {
 
     void commitDataToFile();
     void commitDataFromTransaction();
+//    void clearTransactionFile();
 
     List<Student> searchStudentById(String id);
     List<Student> searchStudentByName(String name);

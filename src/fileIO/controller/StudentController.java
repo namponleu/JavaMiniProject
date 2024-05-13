@@ -7,10 +7,12 @@ import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.ShownBorders;
 import org.nocrala.tools.texttablefmt.Table;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -26,6 +28,11 @@ import static java.lang.StringTemplate.STR;
 public class StudentController {
     private final StudentService studentService;
     private final Scanner scanner;
+    private final String FILE_NAME = "src/allFile/students.txt";
+    private static final String TRANSACTION_FILE_NAME = "src/allFile/TransactionFile.txt";
+//    private final List<Student> students;
+    private List<Student> students = new ArrayList<>();
+
 
     private int currentPage = 1;
     private static final int RECORDS_PER_PAGE = 10;
@@ -36,47 +43,51 @@ public class StudentController {
     }
 
     public void start() {
-        int option;
-        displayTitle();
-        do {
-            displayMenu();
-            option = Integer.parseInt(scanner.nextLine());
-            switch (option) {
-                case 1:
-                    addNewStudent();
-                    break;
-                case 2:
-                    listAllStudents();
-                    break;
-                case 3:
-                    commitDataToFile();
-                    break;
-                case 4:
-                    searchForStudent();
-                    break;
-                case 5:
-                    updateStudentById();
-                    break;
-                case 6:
-                    deleteStudentData();
-                    break;
-                case 7:
-                    generateDataToFile();
-                    break;
-                case 8:
-                    deleteAllData();
-                    break;
-                case 0:
-                case 99:
-                    System.out.println("Exiting...");
-                    break;
-                default:
-                    System.out.println("Invalid option! Please try again.");
-            }
-        } while (option != 0 && option != 99);
+        // Check for pending transactions
+        boolean transactionsProcessed = checkPendingTransactions();
+        if (!transactionsProcessed) {
+            int option;
+            displayTitle();
+            do {
+                displayMenu();
+                option = Integer.parseInt(scanner.nextLine());
+                switch (option) {
+                    case 1:
+                        addNewStudent();
+                        break;
+                    case 2:
+                        listAllStudents();
+                        break;
+                    case 3:
+                        commitDataToFile();
+                        break;
+                    case 4:
+                        searchForStudent();
+                        break;
+                    case 5:
+                        updateStudentById();
+                        break;
+                    case 6:
+                        deleteStudentData();
+                        break;
+                    case 7:
+                        generateDataToFile();
+                        break;
+                    case 8:
+                        deleteAllData();
+                        break;
+                    case 0:
+                    case 99:
+                        System.out.println("Exiting...");
+                        break;
+                    default:
+                        System.out.println("Invalid option! Please try again.");
+                }
+            } while (option != 0 && option != 99);
+        }
     }
 
-    private void displayTitle() {
+    public static void displayTitle() {
         System.out.println("\t".repeat(5) + " ██████╗███████╗████████╗ █████╗ ██████╗     ███████╗███╗   ███╗███████╗");
         System.out.println("\t".repeat(5) + "██╔════╝██╔════╝╚══██╔══╝██╔══██╗██╔══██╗    ██╔════╝████╗ ████║██╔════╝");
         System.out.println("\t".repeat(5) + "██║     ███████╗   ██║   ███████║██║  ██║    ███████╗██╔████╔██║███████╗");
@@ -85,7 +96,7 @@ public class StudentController {
         System.out.println("\t".repeat(5) + " ╚═════╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═════╝     ╚══════╝╚═╝     ╚═╝╚══════╝");
     }
 
-    private void displayMenu() {
+    public static void displayMenu() {
         //Menu
         System.out.println("=".repeat(156));
         Table table = new Table(3, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
@@ -109,39 +120,181 @@ public class StudentController {
         System.out.print("➡\uFE0F Insert option: ");
     }
 
+    private void clearTransactionFile(String fileName) {
+        File file = new File(fileName);
+        try {
+            if (file.exists()) {
+                FileWriter writer = new FileWriter(file);
+                writer.write(""); // Clear file contents
+                writer.close();
+                System.out.println("Transaction file cleared.");
+            } else {
+                System.out.println("Transaction file does not exist.");
+            }
+        } catch (IOException e) {
+            System.out.println("Error clearing transaction file: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+    }
+
+    private boolean checkPendingTransactions() {
+        if (Files.exists(Paths.get(TRANSACTION_FILE_NAME))) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(TRANSACTION_FILE_NAME))) {
+                long numRecords = reader.lines().count();
+                if (numRecords > 0) {
+                    System.out.println("[*] SPENT TIME FOR READING DATA: 0.007S");
+                    System.out.println("[*] NUMBER OF PENDING RECORDS: " + numRecords);
+                    System.out.print("> Commit your pending data record(s) beforehand [Y/N]: ");
+                    String choice = scanner.nextLine().toUpperCase();
+                    if (choice.equals("Y")) {
+                        commitDataToFile();
+                        clearTransactionFile(TRANSACTION_FILE_NAME);
+                        return true;
+                    } else if (choice.equals("N")) {
+                        System.out.println("Operation canceled.");
+                    } else {
+                        System.out.println("Invalid choice. Please enter Y or N.");
+                    }
+                } else {
+                    System.out.println("No pending records.");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Transaction file not found.");
+        }
+        return false;
+    }
+    
+
     private void addNewStudent() {
-        System.out.println("..............................");
-        System.out.println("➡\uFE0F INSERT STUDENT'S INFO");
-        System.out.print("[➕] Insert student's name: ");
-        String name = scanner.nextLine();
-        System.out.println("[➕] STUDENT DATE OF BIRTH");
-        System.out.print("1. Year (number): ");
-        Integer year = new Scanner(System.in).nextInt();
-        System.out.print("2. Month (number): ");
-        Integer month = new Scanner(System.in).nextInt();
-        System.out.print("3. Day (number): ");
-        Integer day = new Scanner(System.in).nextInt();
-        LocalDate dateOfBirth = LocalDate.of(year, month, day);
+    System.out.println("..............................");
+    System.out.println("➡️ INSERT STUDENT'S INFO");
+    System.out.print("[➕] Insert student's name: ");
+    String name = scanner.nextLine();
+    System.out.println("[➕] STUDENT DATE OF BIRTH");
+    System.out.print("1. Year (number): ");
+    Integer year = Integer.parseInt(scanner.nextLine());
+    System.out.print("2. Month (number): ");
+    Integer month = Integer.parseInt(scanner.nextLine());
+    System.out.print("3. Day (number): ");
+    Integer day = Integer.parseInt(scanner.nextLine());
+    LocalDate dateOfBirth = LocalDate.of(year, month, day);
 
-        System.out.println("[❗\uFE0F] YOU CAN INSERT MULTI CLASSES BY SPLITTING [,] SYMBOL (C1,02)");
-        System.out.print("[➕] Student's class: ");
-        String classroom = scanner.nextLine();
-        System.out.println("[❗\uFE0F] YOU CAN INSERT MULTI SUBJECTS BY SPLITTING [,] SYMBOL (S1, 52)");
-        System.out.print("[➕] Subject studied: ");
-        String subjects = scanner.nextLine();
+    System.out.println("[❗️] YOU CAN INSERT MULTI CLASSES BY SPLITTING [,] SYMBOL (C1,02)");
+    System.out.print("[➕] Student's class: ");
+    String classroom = scanner.nextLine();
+    System.out.println("[❗️] YOU CAN INSERT MULTI SUBJECTS BY SPLITTING [,] SYMBOL (S1, 52)");
+    System.out.print("[➕] Subject studied: ");
+    String subjects = scanner.nextLine();
 
-        LocalDate createAt = LocalDate.now();
-        // Generate default ID with prefix "CSTAD"
-        String id = generateDefaultId();
-        Student student = new Student(id, name, dateOfBirth, classroom, subjects, createAt);
-        studentService.addNewStudent(student);
+    LocalDate createdAt = LocalDate.now();
+    // Generate default ID with prefix "CSTAD"
+    String id = generateDefaultId();
+    Student student = new Student(id, name, dateOfBirth, classroom, subjects, createdAt);
+
+    // Write new student's data to the transaction file
+    writeDataToTransactionFile(student);
+
+    System.out.println("Student data added to the transaction file.");
+}
+    private void writeDataToTransactionFile(Student student) {
+        String transactionFileName = "src/allFile/TransactionFile.txt";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(transactionFileName, true))) {
+            // Append new student's data to the transaction file
+            writer.write(String.format("%s,%s,%s,%s,%s,%s%n",
+                    student.getId(),
+                    student.getName(),
+                    student.getDateOfBirth(),
+                    student.getClassroom(),
+                    student.getSubjects(),
+                    student.getCreateAt()));
+            System.out.println("Student data written to transaction file: " + transactionFileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-    public void commitDataToFile(){
-        studentService.commitDataToFile();
+
+public void commitDataFromTransaction() {
+    String transactionFileName = "src/allFile/TransactionFile.txt";
+
+    if (Files.exists(Paths.get(transactionFileName))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(transactionFileName))) {
+            System.out.print("Commit your pending data record(s) beforehand [Y/N]: ");
+            String choice = scanner.nextLine().toUpperCase();
+
+            if (choice.equals("Y")) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    try {
+                        // Process and add transaction data to main data
+                        String[] data = line.split(",");
+                        String id = data[0];
+                        String name = data[1];
+                        LocalDate dateOfBirth = LocalDate.parse(data[2]);
+                        String classroom = data[3];
+                        String subjects = data[4];
+                        LocalDate createdAt = LocalDate.parse(data[5]);
+
+                        Student student = new Student(id, name, dateOfBirth, classroom, subjects, createdAt);
+                        students.add(student);
+//                        displayTitle();
+//                        displayMenu();
+                    } catch (DateTimeParseException | ArrayIndexOutOfBoundsException e) {
+                        System.out.println("Error processing transaction data: " + e.getMessage());
+                    }
+                }
+
+                // Write the updated data to the main file
+                writeDataToFile();
+                System.out.println("Data committed is successfully.");
+
+
+                // Clear transaction file after committing data
+                clearTransactionFile(transactionFileName);
+
+                // Display title and menu again
+//                displayTitle();
+//                displayMenu();
+//                start();
+            } else if (choice.equals("N")) {
+                System.out.println("Operation canceled.");
+
+            } else {
+                System.out.println("Invalid choice. Please enter Y or N.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    } else {
+        System.out.println("No transaction file found.");
     }
-    public void commitDataFromTransaction(){
-        studentService.commitDataFromTransaction();
+}
+
+public void commitDataToFile() {
+    studentService.commitDataFromTransaction();
+}
+
+    private void writeDataToFile() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
+            writer.flush();
+            for (Student student : students) {
+                writer.write(String.format("%s,%s,%s,%s,%s,%s%n",
+                        student.getId(),
+                        student.getName(),
+                        student.getDateOfBirth(),
+                        student.getClassroom(),
+                        student.getSubjects(),
+                        student.getCreateAt(),
+                        student.getCreateAt()));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
 
     public static String generateDefaultId() {
         int randomNumber = new Random().nextInt(10000) + 1;

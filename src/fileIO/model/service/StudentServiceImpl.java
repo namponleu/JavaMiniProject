@@ -1,15 +1,19 @@
 package fileIO.model.service;
 
+import fileIO.controller.StudentController;
 import fileIO.model.Student;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static fileIO.controller.StudentController.generateDefaultId;
+import static fileIO.controller.StudentController.*;
+import static fileIO.view.View.scanner;
 
 public class StudentServiceImpl implements StudentService {
     private final String FILE_NAME = "src/allFile/students.txt";
@@ -78,13 +82,85 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void commitDataToFile() {
-
+        writeDataToFile();
+        System.out.println("Data committed to file successfully.");
     }
+
+//    @Override
+//    public void commitDataFromTransaction() {
+//
+//    }
+
+    private void clearTransactionFile(String fileName) {
+        File file = new File(fileName);
+        try {
+            if (file.exists()) {
+                FileWriter writer = new FileWriter(file);
+                writer.write(""); // Clear file contents
+                writer.close();
+                System.out.println("Transaction file cleared.");
+            } else {
+                System.out.println("Transaction file does not exist.");
+            }
+        } catch (IOException e) {
+            System.out.println("Error clearing transaction file: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void commitDataFromTransaction() {
+        String transactionFileName = "src/allFile/TransactionFile.txt";
 
+        if (Files.exists(Paths.get(transactionFileName))) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(transactionFileName))) {
+                System.out.print("Commit your pending data record(s) beforehand [Y/N]: ");
+                String choice = scanner.nextLine().toUpperCase();
+
+                if (choice.equals("Y")) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        try {
+                            // Process and add transaction data to main data
+                            String[] data = line.split(",");
+                            String id = data[0];
+                            String name = data[1];
+                            LocalDate dateOfBirth = LocalDate.parse(data[2]);
+                            String classroom = data[3];
+                            String subjects = data[4];
+                            LocalDate createdAt = LocalDate.parse(data[5]);
+
+                            Student student = new Student(id, name, dateOfBirth, classroom, subjects, createdAt);
+                            students.add(student);
+                        } catch (DateTimeParseException | ArrayIndexOutOfBoundsException e) {
+                            System.out.println("Error processing transaction data: " + e.getMessage());
+                        }
+                    }
+
+                    // Write the updated data to the main file
+                    writeDataToFile();
+                    System.out.println("Data committed successfully.");
+
+                    // Clear transaction file after committing data
+                    clearTransactionFile(transactionFileName);
+
+                    // Import and call displayTitle() and displayMenu() from StudentController
+                    StudentController.displayTitle();
+                    StudentController.displayMenu();
+                } else if (choice.equals("N")) {
+                    System.out.println("Operation canceled.");
+                } else {
+                    System.out.println("Invalid choice. Please enter Y or N.");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("No transaction file found.");
+        }
     }
+
 
     @Override
     public List<Student> searchStudentById(String id) {
