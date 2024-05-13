@@ -148,6 +148,7 @@ public class StudentServiceImpl implements StudentService {
                     // Import and call displayTitle() and displayMenu() from StudentController
                     StudentController.displayTitle();
                     StudentController.displayMenu();
+                    StudentController.start();
                 } else if (choice.equals("N")) {
                     System.out.println("Operation canceled.");
                 } else {
