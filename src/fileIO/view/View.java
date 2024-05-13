@@ -8,6 +8,10 @@ public class View {
     private static final Scanner scanner = new Scanner(System.in);
 
     public static void displayStudents(List<Student> students) {
+        System.out.println(" test message");
+
+
+
         System.out.println("[*] STUDENTS' DATA");
         System.out.println("ID           STUDENT'S NAME    STUDENT'S DATE OF BIRTH    STUDENTS classroom    STUDENTS SUBJECT");
         for (Student student : students) {
