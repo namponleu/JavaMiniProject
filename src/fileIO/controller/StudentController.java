@@ -87,7 +87,7 @@ public class StudentController {
 
     private void displayMenu() {
         //Menu
-        System.out.println("=".repeat(130));
+        System.out.println("=".repeat(156));
         Table table = new Table(3, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
         table.addCell("[1].ADD NEW STUDENT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
         table.addCell("[2].LIST ALL STUDENTS", new CellStyle(CellStyle.HorizontalAlign.CENTER));
@@ -97,10 +97,15 @@ public class StudentController {
         table.addCell("[6].DELETE STUDENT'S DATA", new CellStyle(CellStyle.HorizontalAlign.CENTER));
         table.addCell("[7].GENERATE DATA TO FILE", new CellStyle(CellStyle.HorizontalAlign.CENTER));
         table.addCell("[8].DELETE/CLEAR ALL DATA FROM DATA STORE", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell("[0,99]. EXIT");
+        table.addCell("[0,99]. EXIT",new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.setColumnWidth(0,51,70);
+        table.setColumnWidth(1,51,70);
+        table.setColumnWidth(2,51,70);
+
+
         System.out.println(table.render());
-        System.out.println("\t".repeat(25) + "Copyright-CSTAD");
-        System.out.println("=".repeat(130));
+        System.out.println("\t".repeat(35) + "Copyright-CSTAD");
+        System.out.println("=".repeat(156));
         System.out.print("> Insert option: ");
     }
 
@@ -152,20 +157,28 @@ public class StudentController {
             int endIndex = Math.min(startIndex + RECORDS_PER_PAGE, students.size());
 
             Table table = new Table(6, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
-            table.addCell("ID");
-            table.addCell("STUDENT'S NAME");
-            table.addCell("STUDENT'S DATE OF BIRTH ");
-            table.addCell("STUDENT CLASSROOM");
-            table.addCell("STUDENTS SUBJECT");
-            table.addCell("CREATE AT / UPDATE AT");
+            table.addCell("ID",new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell("STUDENT'S NAME", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell("STUDENT'S DATE OF BIRTH ", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell("STUDENT CLASSROOM", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell("STUDENTS SUBJECT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell("CREATE AT / UPDATE AT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.setColumnWidth(0,25,40);
+            table.setColumnWidth(1,25,40);
+            table.setColumnWidth(2,25,40);
+            table.setColumnWidth(3,25,40);
+            table.setColumnWidth(4,25,40);
+            table.setColumnWidth(5,25,40);
+
+
             for (int i = startIndex; i < endIndex; i++) {
                 Student student = students.get(i);
-                table.addCell(student.getId());
-                table.addCell(student.getName());
-                table.addCell(student.getDateOfBirth().toString());
-                table.addCell(student.getClassroom());
-                table.addCell(student.getSubjects());
-                table.addCell(student.getCreateAt().toString());
+                table.addCell(student.getId(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(student.getName(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(student.getDateOfBirth().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(student.getClassroom(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(student.getSubjects(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(student.getCreateAt().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
             }
             System.out.println(table.render());
 
@@ -204,20 +217,27 @@ public class StudentController {
 
         System.out.println("[!] LAST PAGE << [*] STUDENTS' DATA");
         Table table = new Table(6, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
-        table.addCell("ID");
-        table.addCell("STUDENT'S NAME");
-        table.addCell("STUDENT'S DATE OF BIRTH ");
-        table.addCell("STUDENT CLASSROOM");
-        table.addCell("STUDENTS SUBJECT");
-        table.addCell("CREATE AT / UPDATE AT");
+        table.addCell("ID", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell("STUDENT'S NAME", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell("STUDENT'S DATE OF BIRTH ", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell("STUDENT CLASSROOM", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell("STUDENTS SUBJECT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell("CREATE AT / UPDATE AT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.setColumnWidth(0,25,40);
+        table.setColumnWidth(1,25,40);
+        table.setColumnWidth(2,25,40);
+        table.setColumnWidth(3,25,40);
+        table.setColumnWidth(4,25,40);
+        table.setColumnWidth(5,25,40);
+
         for (int i = startIndex; i < endIndex; i++) {
             Student student = students.get(i);
-            table.addCell(student.getId());
-            table.addCell(student.getName());
-            table.addCell(student.getDateOfBirth().toString());
-            table.addCell(student.getClassroom());
-            table.addCell(student.getSubjects());
-            table.addCell(student.getCreateAt().toString());
+            table.addCell(student.getId(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(student.getName(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(student.getDateOfBirth().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(student.getClassroom(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(student.getSubjects(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(student.getCreateAt().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
         }
         System.out.println(table.render());
 
