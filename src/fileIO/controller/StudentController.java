@@ -106,15 +106,15 @@ public class StudentController {
         System.out.println(table.render());
         System.out.println("\t".repeat(35) + "Copyright-CSTAD");
         System.out.println("=".repeat(156));
-        System.out.print("> Insert option: ");
+        System.out.print("➡\uFE0F Insert option: ");
     }
 
     private void addNewStudent() {
         System.out.println("..............................");
-        System.out.println("> INSERT STUDENT'S INFO");
-        System.out.print("[+] Insert student's name: ");
+        System.out.println("➡\uFE0F INSERT STUDENT'S INFO");
+        System.out.print("[➕] Insert student's name: ");
         String name = scanner.nextLine();
-        System.out.println("[+] STUDENT DATE OF BIRTH");
+        System.out.println("[➕] STUDENT DATE OF BIRTH");
         System.out.print("1. Year (number): ");
         Integer year = new Scanner(System.in).nextInt();
         System.out.print("2. Month (number): ");
@@ -123,11 +123,11 @@ public class StudentController {
         Integer day = new Scanner(System.in).nextInt();
         LocalDate dateOfBirth = LocalDate.of(year, month, day);
 
-        System.out.println("[!] YOU CAN INSERT MULTI CLASSES BY SPLITTING [,] SYMBOL (C1,02)");
-        System.out.print("[+] Student's class: ");
+        System.out.println("[❗\uFE0F] YOU CAN INSERT MULTI CLASSES BY SPLITTING [,] SYMBOL (C1,02)");
+        System.out.print("[➕] Student's class: ");
         String classroom = scanner.nextLine();
-        System.out.println("[!] YOU CAN INSERT MULTI SUBJECTS BY SPLITTING [,] SYMBOL (S1, 52)");
-        System.out.print("[+] Subject studied: ");
+        System.out.println("[❗\uFE0F] YOU CAN INSERT MULTI SUBJECTS BY SPLITTING [,] SYMBOL (S1, 52)");
+        System.out.print("[➕] Subject studied: ");
         String subjects = scanner.nextLine();
 
         LocalDate createAt = LocalDate.now();
@@ -182,31 +182,31 @@ public class StudentController {
             }
             System.out.println(table.render());
 
-            System.out.println("[*] Page Number: " + currentPage + "      [*] Actual record: " + (endIndex - startIndex) + "        [*] All Record: " + students.size());
-            System.out.print("[+] Previous (P/p) - [+] Next (n/N) - [+] Back (B/b): ");
+            System.out.println("[\uD83D\uDCA2] Page Number: " + currentPage + "      [\uD83D\uDCA2] Actual record: " + (endIndex - startIndex) + "        [\uD83D\uDCA2] All Record: " + students.size());
+            System.out.print("[➖]  Previous (P/p) - [➕] Next (n/N) - [\uD83D\uDD01] Back (B/b): ");
             String choice = scanner.nextLine().trim().toLowerCase();
 
             switch (choice) {
                 case "p":
                     if (currentPage > 1) {
                         currentPage--;
-                        System.out.println("[!] FIRST PAGE << [*] STUDENTS' DATA");
+                        System.out.println("[❗\uFE0F] FIRST PAGE << [✴\uFE0F] STUDENTS' DATA");
                     } else {
-                        System.out.println("[!] ALREADY FIRST PAGE << [*] STUDENTS' DATA");
+                        System.out.println("[❗\uFE0F] ALREADY FIRST PAGE << [✴\uFE0F] STUDENTS' DATA");
                     }
                     break;
                 case "n":
                     if (currentPage < totalPages) {
                         currentPage++;
-                        System.out.println("[!] LAST PAGE << [*] STUDENTS' DATA");
+                        System.out.println("[❗\uFE0F] LAST PAGE << [✴\uFE0F] STUDENTS' DATA");
                     } else {
-                        System.out.println("[!] ALREADY LAST PAGE << [*] STUDENTS' DATA");
+                        System.out.println("[❗\uFE0F] ALREADY LAST PAGE << [✴\uFE0F] STUDENTS' DATA");
                     }
                     break;
                 case "b":
                     return students;
                 default:
-                    System.out.println("Invalid choice! Please try again.");
+                    System.out.println("⛔\uFE0FInvalid choice! Please try again.");
             }
         }
     }
@@ -215,7 +215,7 @@ public class StudentController {
         int startIndex = (currentPage - 1) * RECORDS_PER_PAGE;
         int endIndex = Math.min(startIndex + RECORDS_PER_PAGE, students.size());
 
-        System.out.println("[!] LAST PAGE << [*] STUDENTS' DATA");
+        System.out.println("[❗\uFE0F] LAST PAGE << [✴\uFE0F] STUDENTS' DATA");
         Table table = new Table(6, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
         table.addCell("ID", new CellStyle(CellStyle.HorizontalAlign.CENTER));
         table.addCell("STUDENT'S NAME", new CellStyle(CellStyle.HorizontalAlign.CENTER));
@@ -241,17 +241,17 @@ public class StudentController {
         }
         System.out.println(table.render());
 
-        System.out.println("[*] Page Number: " + currentPage + "      [*] Actual record: " + (endIndex - startIndex) + "        [*] All Record: " + students.size());
-        System.out.print("[+] Previous (P/p) - [+] Next (n/N) - [+] Back (B/b): ");
+        System.out.println("[\uD83D\uDCA2] Page Number: " + currentPage + "      [\uD83D\uDCA2] Actual record: " + (endIndex - startIndex) + "        [\uD83D\uDCA2] All Record: " + students.size());
+        System.out.print("[➖] Previous (P/p) - [➕] Next (n/N) - [\uD83D\uDD01] Back (B/b): ");
         scanner.nextLine();
 
     }
 
     private void searchForStudent() {
-        System.out.println("[+] SEARCHING STUDENT");
+        System.out.println("[➕] SEARCHING STUDENT");
         System.out.println("1. SEARCH BY NAME");
         System.out.println("2. SEARCH BY ID");
-        System.out.print("please choose option 1 or 2 : ");
+        System.out.print(" \uD83D\uDCBB please choose option 1 or 2 : ");
         int option = Integer.parseInt(scanner.nextLine());
         switch (option) {
             case 1:
@@ -261,17 +261,17 @@ public class StudentController {
                 searchStudentById();
                 break;
             default:
-                System.out.println("Invalid option! Please try again.");
+                System.out.println("⛔\uFE0F Invalid option! Please try again.");
         }
     }
 
     private List<Student> searchStudentByName() {
-        System.out.print(">>> Insert student's NAME: ");
+        System.out.print("\uD83D\uDD0D Insert student's NAME: ");
         String name = scanner.nextLine();
         List<Student> students = studentService.searchStudentByName(name);
 //        displaySearchResults(students);
         if (students.isEmpty()) {
-            System.out.println("Student not found.");
+            System.out.println("\uD83D\uDD0D Student not found.");
             displaySearchResults(students);
         } else {
             displaySearchResults(students);
@@ -280,18 +280,18 @@ public class StudentController {
             // search students
             return students.stream().filter(e -> e.getId().equals(name)).toList();
         } catch (NullPointerException exception) {
-            System.out.println(STR."[!] Problem: \{exception.getMessage()}");
+            System.out.println(STR."[➕] Problem: \{exception.getMessage()}");
             return new ArrayList<>();
         }
     }
 
     private List<Student> searchStudentById() {
-        System.out.print(">>> Insert student's ID: ");
+        System.out.print("\uD83D\uDD0D Insert student's ID: ");
         String id = scanner.nextLine();
         List<Student> students = studentService.searchStudentById(id);
 
         if (students.isEmpty()) {
-            System.out.println("Student not found.");
+            System.out.println("\uD83D\uDD0D Student not found.");
             displaySearchResults(students);
         } else {
             displaySearchResults(students);
@@ -300,26 +300,26 @@ public class StudentController {
         try {
             return students.stream().filter(e -> e.getId().equals(id)).toList();
         } catch (NullPointerException exception) {
-            System.out.println("[!] Problem: " + exception.getMessage());
+            System.out.println("[➕] Problem: " + exception.getMessage());
             return new ArrayList<>();
         }
     }
 
     private void updateStudentById() {
-        System.out.print(">>> Insert student's ID: ");
+        System.out.print("\uD83D\uDD0D Insert student's ID: ");
         String id = scanner.nextLine();
         // search students
         List<Student> students = studentService.searchStudentById(id);
 //        displaySearchResults(students);
         if (!students.isEmpty()) {
-            System.out.println("[!] Enter updated student details:");
+            System.out.println("[❗\uFE0F] Enter updated student details:");
 
             // Prompt user to input updated details
-            System.out.print("[!] Enter updated name: ");
+            System.out.print("[❗\uFE0F] Enter updated name: ");
             String name = scanner.nextLine();
 
             // Capture and parse the updated date of birth
-            System.out.println("[!] Enter updated date of birth ");
+            System.out.println("[❗\uFE0F] Enter updated date of birth ");
             System.out.print("1. Year (number): ");
             int year = Integer.parseInt(scanner.nextLine());
             System.out.print("2. Month (number): ");
@@ -328,11 +328,11 @@ public class StudentController {
             int day = Integer.parseInt(scanner.nextLine());
             LocalDate dob = LocalDate.of(year, month, day);
 
-            System.out.println("[!] YOU CAN INSERT MULTI CLASSES BY SPLITTING [,] SYMBOL (C1,02)");
+            System.out.println("[❗\uFE0F] YOU CAN INSERT MULTI CLASSES BY SPLITTING [,] SYMBOL (C1,02)");
             System.out.print("[+] Student's class: ");
             String classroom = scanner.nextLine();
-            System.out.println("[!] YOU CAN INSERT MULTI SUBJECTS BY SPLITTING [,] SYMBOL (S1, 52)");
-            System.out.print("[+] Subject studied: ");
+            System.out.println("[❗\uFE0F] YOU CAN INSERT MULTI SUBJECTS BY SPLITTING [,] SYMBOL (S1, 52)");
+            System.out.print("[➕] Subject studied: ");
             String subjects = scanner.nextLine();
 
             LocalDate createAt = LocalDate.now();
@@ -343,29 +343,29 @@ public class StudentController {
             Student updated = studentService.updateStudentById(id, updatedStudent);
 
             if (updated != null) {
-                System.out.println("Student with ID " + id + " updated successfully.");
+                System.out.println("\uD83D\uDD0D\n Student with ID " + id + " updated successfully \uD83C\uDF89\n");
 
                 List<Student> allStudents = studentService.listAllStudents();
                 displaySearchResults(allStudents);
             } else {
-                System.out.println("No student found with the given ID.");
+                System.out.println("\uD83D\uDEAB No student found with the given ID.");
             }
         } else {
-            System.out.println("No student found with the given ID.");
+            System.out.println(" \uD83D\uDEAB No student found with the given ID.");
         }
     }
 
     private Student deleteStudentData() {
-        System.out.print(">>> Insert student's ID: ");
+        System.out.print("\uD83D\uDD0D Insert student's ID: ");
         String id = scanner.nextLine();
         Student deletedStudent = studentService.deleteStudentById(id);
 
         if (deletedStudent != null) {
-            System.out.println("Student with ID " + id + " deleted successfully.");
+            System.out.println("\uD83D\uDD0D Student Search with ID " + id + " deleted successfully \uD83D\uDDD1\uFE0F. ");
             List<Student> students = studentService.listAllStudents();
             displaySearchResults(students);
         } else {
-            System.out.println("No student found with the given ID.");
+            System.out.println(" \uD83D\uDEAB No student found with the given ID.");
         }
         return deletedStudent;
     }
@@ -375,18 +375,18 @@ public class StudentController {
         String choice = scanner.nextLine().toUpperCase();
         if (choice.equals("Y")) {
             studentService.deleteAllStudents();
-            System.out.println("All data deleted successfully.");
+            System.out.println("All data deleted successfully \uD83D\uDDD1\uFE0F.");
             List<Student> students = studentService.listAllStudents();
             displaySearchResults(students);
         } else if (choice.equals("N")) {
             System.out.println("Operation canceled.");
         } else {
-            System.out.println("Invalid choice. Please enter Y or N.");
+            System.out.println("⛔\uFE0F Invalid choice. Please enter Y or N.");
         }
     }
 
     private void generateDataToFile() {
-        System.out.print("[+] Number of objects you want to generate (100M - 100_000_000): ");
+        System.out.print("[➕] Number of objects you want to generate (100M - 100_000_000): ");
         int numRecords = Integer.parseInt(scanner.nextLine());
 
         long startTime = System.currentTimeMillis();
@@ -416,7 +416,7 @@ public class StudentController {
         long endTime = System.currentTimeMillis();
         double elapsedTime = (endTime - startTime) / 10000.00;
 
-        System.out.printf("[+] SPENT TIME FOR WRITING DATA: %.3f S%n", elapsedTime);
-        System.out.printf("[+] WROTE DATA %d RECORD SUCCESSFULLY.%n", numRecords);
+        System.out.printf("[➕] SPENT TIME FOR WRITING DATA: %.3f S%n", elapsedTime);
+        System.out.printf("[➕] WROTE DATA %d RECORD SUCCESSFULLY.%n", numRecords);
     }
 }
