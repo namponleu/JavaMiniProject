@@ -12,7 +12,7 @@ import java.util.List;
 import static fileIO.controller.StudentController.generateDefaultId;
 
 public class StudentServiceImpl implements StudentService {
-    private final String FILE_NAME = "students.txt";
+    private final String FILE_NAME = "src/allFile/students.txt";
     private final List<Student> students;
 
     public StudentServiceImpl() {
@@ -46,8 +46,6 @@ public class StudentServiceImpl implements StudentService {
         }
     }
 
-
-
     private void writeDataToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
             writer.flush();
@@ -80,15 +78,13 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void commitDataToFile() {
-        //write code
+
     }
 
     @Override
     public void commitDataFromTransaction() {
-        // write code
+
     }
-
-
 
     @Override
     public List<Student> searchStudentById(String id) {
@@ -100,7 +96,7 @@ public class StudentServiceImpl implements StudentService {
         }
         return result;
     }
-    //updateStudentInfoById in class StudentServiceImpl
+
     @Override
     public List<Student> searchStudentByName(String name) {
         List<Student> result = new ArrayList<>();
@@ -127,7 +123,6 @@ public class StudentServiceImpl implements StudentService {
         }
         return studentToRemove;
     }
-
 
     @Override
     public Student updateStudentById(String id, Student updatedStudent) {
@@ -183,6 +178,4 @@ public class StudentServiceImpl implements StudentService {
             e.printStackTrace();
         }
     }
-
-
 }

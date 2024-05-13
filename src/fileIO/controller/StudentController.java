@@ -26,7 +26,6 @@ import static java.lang.StringTemplate.STR;
 public class StudentController {
     private final StudentService studentService;
     private final Scanner scanner;
-    private final String FILE_NAME = "students.txt";
 
     private int currentPage = 1;
     private static final int RECORDS_PER_PAGE = 10;
@@ -50,7 +49,7 @@ public class StudentController {
                     listAllStudents();
                     break;
                 case 3:
-                    studentService.commitDataToFile();
+                    commitDataToFile();
                     break;
                 case 4:
                     searchForStudent();
@@ -112,15 +111,13 @@ public class StudentController {
         String name = scanner.nextLine();
         System.out.println("[+] STUDENT DATE OF BIRTH");
         System.out.print("1. Year (number): ");
-//        int year = Integer.parseInt(scanner.nextLine());
         Integer year = new Scanner(System.in).nextInt();
         System.out.print("2. Month (number): ");
-//        int month = Integer.parseInt(scanner.nextLine());
         Integer month = new Scanner(System.in).nextInt();
         System.out.print("3. Day (number): ");
-//        int day = Integer.parseInt(scanner.nextLine());
         Integer day = new Scanner(System.in).nextInt();
         LocalDate dateOfBirth = LocalDate.of(year, month, day);
+
         System.out.println("[!] YOU CAN INSERT MULTI CLASSES BY SPLITTING [,] SYMBOL (C1,02)");
         System.out.print("[+] Student's class: ");
         String classroom = scanner.nextLine();
@@ -134,10 +131,15 @@ public class StudentController {
         Student student = new Student(id, name, dateOfBirth, classroom, subjects, createAt);
         studentService.addNewStudent(student);
     }
+    public void commitDataToFile(){
+        studentService.commitDataToFile();
+    }
+    public void commitDataFromTransaction(){
+        studentService.commitDataFromTransaction();
+    }
 
     public static String generateDefaultId() {
         int randomNumber = new Random().nextInt(10000) + 1;
-//        String createAt = "2024-02-02";
         return String.format("%dCSTAD", randomNumber);
     }
 
@@ -149,7 +151,6 @@ public class StudentController {
             int startIndex = (currentPage - 1) * RECORDS_PER_PAGE;
             int endIndex = Math.min(startIndex + RECORDS_PER_PAGE, students.size());
 
-//            System.out.println("[!] LAST PAGE << [*] STUDENTS' DATA");
             Table table = new Table(6, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
             table.addCell("ID");
             table.addCell("STUDENT'S NAME");
@@ -178,8 +179,7 @@ public class StudentController {
                         currentPage--;
                         System.out.println("[!] FIRST PAGE << [*] STUDENTS' DATA");
                     } else {
-                        System.out.println("[!] FIRST PAGE << [*] STUDENTS' DATA");
-
+                        System.out.println("[!] ALREADY FIRST PAGE << [*] STUDENTS' DATA");
                     }
                     break;
                 case "n":
@@ -187,8 +187,7 @@ public class StudentController {
                         currentPage++;
                         System.out.println("[!] LAST PAGE << [*] STUDENTS' DATA");
                     } else {
-                        System.out.println("[!] LAST PAGE << [*] STUDENTS' DATA");
-
+                        System.out.println("[!] ALREADY LAST PAGE << [*] STUDENTS' DATA");
                     }
                     break;
                 case "b":
@@ -198,7 +197,6 @@ public class StudentController {
             }
         }
     }
-
 
     private void displaySearchResults(List<Student> students) {
         int startIndex = (currentPage - 1) * RECORDS_PER_PAGE;
@@ -233,7 +231,6 @@ public class StudentController {
         System.out.println("[+] SEARCHING STUDENT");
         System.out.println("1. SEARCH BY NAME");
         System.out.println("2. SEARCH BY ID");
-//        System.out.print("- (ВАСК/B) ТО ВАСК: ");
         System.out.print("please choose option 1 or 2 : ");
         int option = Integer.parseInt(scanner.nextLine());
         switch (option) {
@@ -260,7 +257,7 @@ public class StudentController {
             displaySearchResults(students);
         }
         try {
-
+            // search students
             return students.stream().filter(e -> e.getId().equals(name)).toList();
         } catch (NullPointerException exception) {
             System.out.println(STR."[!] Problem: \{exception.getMessage()}");
@@ -279,7 +276,7 @@ public class StudentController {
         } else {
             displaySearchResults(students);
         }
-
+        // search students
         try {
             return students.stream().filter(e -> e.getId().equals(id)).toList();
         } catch (NullPointerException exception) {
@@ -288,10 +285,10 @@ public class StudentController {
         }
     }
 
-
     private void updateStudentById() {
         System.out.print(">>> Insert student's ID: ");
         String id = scanner.nextLine();
+        // search students
         List<Student> students = studentService.searchStudentById(id);
 //        displaySearchResults(students);
         if (!students.isEmpty()) {
@@ -325,7 +322,6 @@ public class StudentController {
             // Call the service method to update the student
             Student updated = studentService.updateStudentById(id, updatedStudent);
 
-            // Display message if update is successful
             if (updated != null) {
                 System.out.println("Student with ID " + id + " updated successfully.");
 
@@ -351,10 +347,8 @@ public class StudentController {
         } else {
             System.out.println("No student found with the given ID.");
         }
-
         return deletedStudent;
     }
-
 
     private void deleteAllData() {
         System.out.print("Are you sure you want to delete all data? (Y/N) :");
@@ -371,41 +365,38 @@ public class StudentController {
         }
     }
 
+    private void generateDataToFile() {
+        System.out.print("[+] Number of objects you want to generate (100M - 100_000_000): ");
+        int numRecords = Integer.parseInt(scanner.nextLine());
 
+        long startTime = System.currentTimeMillis();
 
-private void generateDataToFile() {
-    System.out.print("[+] Number of objects you want to generate (100M - 100_000_000): ");
-    int numRecords = Integer.parseInt(scanner.nextLine());
+        // Define the number of threads to use
+        int numThreads = Runtime.getRuntime().availableProcessors();
+        ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
 
-    long startTime = System.currentTimeMillis();
+        // Divide the total number of records by the number of threads
+        int recordsPerThread = numRecords / numThreads;
 
-    // Define the number of threads to use
-    int numThreads = Runtime.getRuntime().availableProcessors();
-    ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
+        // Submit tasks to the executor
+        for (int i = 0; i < numThreads; i++) {
+            int startIndex = i * recordsPerThread;
+            int endIndex = (i == numThreads - 1) ? numRecords : (i + 1) * recordsPerThread;
+            executorService.submit(() -> studentService.generateRecords(startIndex, endIndex));
+        }
 
-    // Divide the total number of records by the number of threads
-    int recordsPerThread = numRecords / numThreads;
+        // Shutdown the executor after all tasks are completed
+        executorService.shutdown();
 
-    // Submit tasks to the executor
-    for (int i = 0; i < numThreads; i++) {
-        int startIndex = i * recordsPerThread;
-        int endIndex = (i == numThreads - 1) ? numRecords : (i + 1) * recordsPerThread;
-        executorService.submit(() -> studentService.generateRecords(startIndex, endIndex));
+        // Wait for all tasks to finish
+        while (!executorService.isTerminated()) {
+            // Do nothing
+        }
+
+        long endTime = System.currentTimeMillis();
+        double elapsedTime = (endTime - startTime) / 10000.00;
+
+        System.out.printf("[+] SPENT TIME FOR WRITING DATA: %.3f S%n", elapsedTime);
+        System.out.printf("[+] WROTE DATA %d RECORD SUCCESSFULLY.%n", numRecords);
     }
-
-    // Shutdown the executor after all tasks are completed
-    executorService.shutdown();
-
-    // Wait for all tasks to finish
-    while (!executorService.isTerminated()) {
-        // Do nothing
-    }
-
-    long endTime = System.currentTimeMillis();
-    double elapsedTime = (endTime - startTime) / 10000.00;
-
-    System.out.printf("[+] SPENT TIME FOR WRITING DATA: %.3f S%n", elapsedTime);
-    System.out.printf("[+] WROTE DATA %d RECORD SUCCESSFULLY.%n", numRecords);
-}
-
 }
