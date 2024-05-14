@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/JavaMiniProjectSMS.iml" filepath="$PROJECT_DIR$/JavaMiniProjectSMS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/JavaMiniProject.iml" filepath="$PROJECT_DIR$/.idea/JavaMiniProject.iml" />
     </modules>
   </component>
 </project>
