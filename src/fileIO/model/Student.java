@@ -1,5 +1,4 @@
 package fileIO.model;
-import lombok.*;
 import java.time.LocalDate;
 
 public class Student {
