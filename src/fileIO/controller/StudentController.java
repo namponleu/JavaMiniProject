@@ -21,16 +21,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-
 import static java.lang.StringTemplate.STR;
-
 public class StudentController {
     private static StudentService studentService = null;
     private static Scanner scanner = null;
     private final String FILE_NAME = "src/allFile/students.txt";
     private static final String TRANSACTION_FILE_NAME = "src/allFile/TransactionFile.txt";
-//    private final List<Student> students;
+    //    private final List<Student> students;
     private List<Student> students = new ArrayList<>();
 
 
@@ -98,7 +95,7 @@ public class StudentController {
 
     public static void displayMenu() {
         //Menu
-        System.out.println("=".repeat(156));
+        System.out.println("=".repeat(135));
         Table table = new Table(3, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
         table.addCell("[1].ADD NEW STUDENT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
         table.addCell("[2].LIST ALL STUDENTS", new CellStyle(CellStyle.HorizontalAlign.CENTER));
@@ -135,9 +132,7 @@ public class StudentController {
             System.out.println("Error clearing transaction file: " + e.getMessage());
             e.printStackTrace();
         }
-
     }
-
     private static boolean checkPendingTransactions() {
         if (Files.exists(Paths.get(TRANSACTION_FILE_NAME))) {
             try (BufferedReader reader = new BufferedReader(new FileReader(TRANSACTION_FILE_NAME))) {
@@ -147,6 +142,7 @@ public class StudentController {
                     System.out.println("[*] NUMBER OF PENDING RECORDS: " + numRecords);
                     System.out.print("> Commit your pending data record(s) beforehand [Y/N]: ");
                     String choice = scanner.nextLine().toUpperCase();
+
                     if (choice.equals("Y")) {
                         commitDataToFile();
                         clearTransactionFile(TRANSACTION_FILE_NAME);
@@ -167,42 +163,37 @@ public class StudentController {
         }
         return false;
     }
-    
-
     private static void addNewStudent() {
-    System.out.println("..............................");
-    System.out.println("➡️ INSERT STUDENT'S INFO");
-    System.out.print("[➕] Insert student's name: ");
-    String name = scanner.nextLine();
-    System.out.println("[➕] STUDENT DATE OF BIRTH");
-    System.out.print("1. Year (number): ");
-    Integer year = Integer.parseInt(scanner.nextLine());
-    System.out.print("2. Month (number): ");
-    Integer month = Integer.parseInt(scanner.nextLine());
-    System.out.print("3. Day (number): ");
-    Integer day = Integer.parseInt(scanner.nextLine());
-    LocalDate dateOfBirth = LocalDate.of(year, month, day);
+        System.out.println("..............................");
+        System.out.println("➡️ INSERT STUDENT'S INFO");
+        System.out.print("[➕] Insert student's name: ");
+        String name = scanner.nextLine();
+        System.out.println("[➕] STUDENT DATE OF BIRTH");
+        System.out.print("1. Year (number): ");
+        Integer year = Integer.parseInt(scanner.nextLine());
+        System.out.print("2. Month (number): ");
+        Integer month = Integer.parseInt(scanner.nextLine());
+        System.out.print("3. Day (number): ");
+        Integer day = Integer.parseInt(scanner.nextLine());
+        LocalDate dateOfBirth = LocalDate.of(year, month, day);
 
-    System.out.println("[❗️] YOU CAN INSERT MULTI CLASSES BY SPLITTING [,] SYMBOL (C1,02)");
-    System.out.print("[➕] Student's class: ");
-    String classroom = scanner.nextLine();
-    System.out.println("[❗️] YOU CAN INSERT MULTI SUBJECTS BY SPLITTING [,] SYMBOL (S1, 52)");
-    System.out.print("[➕] Subject studied: ");
-    String subjects = scanner.nextLine();
-
-    LocalDate createdAt = LocalDate.now();
-    // Generate default ID with prefix "CSTAD"
-    String id = generateDefaultId();
-    Student student = new Student(id, name, dateOfBirth, classroom, subjects, createdAt);
-
-    // Write new student's data to the transaction file
-    writeDataToTransactionFile(student);
-
-    System.out.println("Student data added to the transaction file.");
-}
+        System.out.println("[❗️] YOU CAN INSERT MULTI CLASSES BY SPLITTING [,] SYMBOL (C1,02)");
+        System.out.print("[➕] Student's class: ");
+        String classroom = scanner.nextLine();
+        System.out.println("[❗️] YOU CAN INSERT MULTI SUBJECTS BY SPLITTING [,] SYMBOL (S1, 52)");
+        System.out.print("[➕] Subject studied: ");
+        String subjects = scanner.nextLine();
+        LocalDate createdAt = LocalDate.now();
+        // Generate default ID with prefix "CSTAD"
+        String id = generateDefaultId();
+        Student student = new Student(id, name, dateOfBirth, classroom, subjects, createdAt);
+        // Write new student's data to the transaction file
+        writeDataToTransactionFile(student);
+        System.out.println("Student data added to the transaction file.");
+    }
     private static void writeDataToTransactionFile(Student student) {
         String transactionFileName = "src/allFile/TransactionFile.txt";
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(transactionFileName, true))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(transactionFileName, true))){
             // Append new student's data to the transaction file
             writer.write(String.format("%s,%s,%s,%s,%s,%s%n",
                     student.getId(),
@@ -216,59 +207,9 @@ public class StudentController {
             e.printStackTrace();
         }
     }
-
-public void commitDataFromTransaction() {
-//    String transactionFileName = "src/allFile/TransactionFile.txt";
-//
-//    if (Files.exists(Paths.get(transactionFileName))) {
-//        try (BufferedReader reader = new BufferedReader(new FileReader(transactionFileName))) {
-//            System.out.print("Commit your pending data record(s) beforehand [Y/N]: ");
-//            String choice = scanner.nextLine().toUpperCase();
-//
-//            if (choice.equals("Y")) {
-//                String line;
-//                while ((line = reader.readLine()) != null) {
-//                    try {
-//                        // Process and add transaction data to main data
-//                        String[] data = line.split(",");
-//                        String id = data[0];
-//                        String name = data[1];
-//                        LocalDate dateOfBirth = LocalDate.parse(data[2]);
-//                        String classroom = data[3];
-//                        String subjects = data[4];
-//                        LocalDate createdAt = LocalDate.parse(data[5]);
-//
-//                        Student student = new Student(id, name, dateOfBirth, classroom, subjects, createdAt);
-//                    } catch (DateTimeParseException | ArrayIndexOutOfBoundsException e) {
-//                        System.out.println("Error processing transaction data: " + e.getMessage());
-//                    }
-//                }
-//
-//                // Write the updated data to the main file
-//                writeDataToFile();
-//                System.out.println("Data committed is successfully.");
-//
-//
-//                // Clear transaction file after committing data
-//                clearTransactionFile(transactionFileName);
-//            } else if (choice.equals("N")) {
-//                System.out.println("Operation canceled.");
-//
-//            } else {
-//                System.out.println("Invalid choice. Please enter Y or N.");
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    } else {
-//        System.out.println("No transaction file found.");
-//    }
-}
-
-public static void commitDataToFile() {
-    studentService.commitDataFromTransaction();
-}
-
+    public static void commitDataToFile() {
+        studentService.commitDataFromTransaction();
+    }
     private void writeDataToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
             writer.flush();
@@ -286,21 +227,16 @@ public static void commitDataToFile() {
             e.printStackTrace();
         }
     }
-
-
     public static String generateDefaultId() {
         int randomNumber = new Random().nextInt(10000) + 1;
         return String.format("%dCSTAD", randomNumber);
     }
-
     private static List<Student> listAllStudents() {
         List<Student> students = studentService.listAllStudents();
         int totalPages = (int) Math.ceil((double) students.size() / RECORDS_PER_PAGE);
-
         while (true) {
             int startIndex = (currentPage - 1) * RECORDS_PER_PAGE;
             int endIndex = Math.min(startIndex + RECORDS_PER_PAGE, students.size());
-
             Table table = new Table(6, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
             table.addCell("ID",new CellStyle(CellStyle.HorizontalAlign.CENTER));
             table.addCell("STUDENT'S NAME", new CellStyle(CellStyle.HorizontalAlign.CENTER));
@@ -414,7 +350,7 @@ public static void commitDataToFile() {
         System.out.print("\uD83D\uDD0D Insert student's NAME: ");
         String name = scanner.nextLine();
         List<Student> students = studentService.searchStudentByName(name);
-//        displaySearchResults(students);
+        //        displaySearchResults(students);
         if (students.isEmpty()) {
             System.out.println("\uD83D\uDD0D Student not found.");
             displaySearchResults(students);
@@ -455,7 +391,7 @@ public static void commitDataToFile() {
         String id = scanner.nextLine();
         // search students
         List<Student> students = studentService.searchStudentById(id);
-//        displaySearchResults(students);
+        //        displaySearchResults(students);
         if (!students.isEmpty()) {
             System.out.println("[❗\uFE0F] Enter updated student details:");
 

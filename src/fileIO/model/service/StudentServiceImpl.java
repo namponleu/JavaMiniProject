@@ -2,7 +2,6 @@ package fileIO.model.service;
 
 import fileIO.controller.StudentController;
 import fileIO.model.Student;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -11,7 +10,6 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import static fileIO.controller.StudentController.*;
 import static fileIO.view.View.scanner;
 
@@ -115,45 +113,45 @@ public class StudentServiceImpl implements StudentService {
 
         if (Files.exists(Paths.get(transactionFileName))) {
             try (BufferedReader reader = new BufferedReader(new FileReader(transactionFileName))) {
-                System.out.print("Commit your pending data record(s) beforehand [Y/N]: ");
-                String choice = scanner.nextLine().toUpperCase();
+//                System.out.print("Commit your pending data record(s) beforehand [Y/N]: ");
+//                String choice = scanner.nextLine().toUpperCase();
 
-                if (choice.equals("Y")) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        try {
-                            // Process and add transaction data to main data
-                            String[] data = line.split(",");
-                            String id = data[0];
-                            String name = data[1];
-                            LocalDate dateOfBirth = LocalDate.parse(data[2]);
-                            String classroom = data[3];
-                            String subjects = data[4];
-                            LocalDate createdAt = LocalDate.parse(data[5]);
+//                if (choice.equals("Y")) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    try {
+                        // Process and add transaction data to main data
+                        String[] data = line.split(",");
+                        String id = data[0];
+                        String name = data[1];
+                        LocalDate dateOfBirth = LocalDate.parse(data[2]);
+                        String classroom = data[3];
+                        String subjects = data[4];
+                        LocalDate createdAt = LocalDate.parse(data[5]);
 
-                            Student student = new Student(id, name, dateOfBirth, classroom, subjects, createdAt);
-                            students.add(student);
-                        } catch (DateTimeParseException | ArrayIndexOutOfBoundsException e) {
-                            System.out.println("Error processing transaction data: " + e.getMessage());
-                        }
+                        Student student = new Student(id, name, dateOfBirth, classroom, subjects, createdAt);
+                        students.add(student);
+                    } catch (DateTimeParseException | ArrayIndexOutOfBoundsException e) {
+                        System.out.println("Error processing transaction data: " + e.getMessage());
                     }
-
-                    // Write the updated data to the main file
-                    writeDataToFile();
-                    System.out.println("Data committed successfully.");
-
-                    // Clear transaction file after committing data
-                    clearTransactionFile(transactionFileName);
-
-                    // Import and call displayTitle() and displayMenu() from StudentController
-                    StudentController.displayTitle();
-                    StudentController.displayMenu();
-                    StudentController.start();
-                } else if (choice.equals("N")) {
-                    System.out.println("Operation canceled.");
-                } else {
-                    System.out.println("Invalid choice. Please enter Y or N.");
                 }
+
+                // Write the updated data to the main file
+                writeDataToFile();
+                System.out.println("Data committed successfully.");
+
+                // Clear transaction file after committing data
+                clearTransactionFile(transactionFileName);
+
+                // Import and call displayTitle() and displayMenu() from StudentController
+//                    StudentController.displayTitle();
+//                    StudentController.displayMenu();
+                StudentController.start();
+//                } else if (choice.equals("N")) {
+//                    System.out.println("Operation canceled.");
+//                } else {
+//                    System.out.println("Invalid choice. Please enter Y or N.");
+//                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
