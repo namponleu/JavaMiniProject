@@ -117,6 +117,7 @@ public class StudentServiceImpl implements StudentService {
 //                String choice = scanner.nextLine().toUpperCase();
 
 //                if (choice.equals("Y")) {
+
                 String line;
                 while ((line = reader.readLine()) != null) {
                     try {

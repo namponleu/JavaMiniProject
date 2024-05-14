@@ -1,12 +1,10 @@
 package fileIO.controller;
-
 import fileIO.model.Student;
 import fileIO.model.service.StudentService;
 import org.nocrala.tools.texttablefmt.BorderStyle;
 import org.nocrala.tools.texttablefmt.CellStyle;
 import org.nocrala.tools.texttablefmt.ShownBorders;
 import org.nocrala.tools.texttablefmt.Table;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,20 +15,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
+
+import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import static java.lang.StringTemplate.STR;
+
 public class StudentController {
+
     private static StudentService studentService = null;
     private static Scanner scanner = null;
     private final String FILE_NAME = "src/allFile/students.txt";
     private static final String TRANSACTION_FILE_NAME = "src/allFile/TransactionFile.txt";
-    //    private final List<Student> students;
     private List<Student> students = new ArrayList<>();
-
-
     private static int currentPage = 1;
     private static final int RECORDS_PER_PAGE = 5;
 
@@ -38,7 +37,6 @@ public class StudentController {
         this.studentService = studentService;
         this.scanner = new Scanner(System.in);
     }
-
     public static void start() {
         // Check for pending transactions
         boolean transactionsProcessed = checkPendingTransactions();
@@ -56,7 +54,8 @@ public class StudentController {
                         listAllStudents();
                         break;
                     case 3:
-                        commitDataToFile();
+//                        commitDataToFile();
+                        checkPendingTransactions();
                         break;
                     case 4:
                         searchForStudent();
@@ -89,7 +88,6 @@ public class StudentController {
         String cyanBold = "\u001B[1;36m"; // Cyan color and bold
         String fontEnglish = "\u001B[3m"; // Italic font style
 
-
         System.out.println(cyanBold +"");
         System.out.println(cyanBold +" ".repeat(43) +" ██████╗███████╗████████╗ █████╗ ██████╗     ███████╗███╗   ███╗███████╗");
         System.out.println(cyanBold +" ".repeat(43) +"██╔════╝██╔════╝╚══██╔══╝██╔══██╗██╔══██╗    ██╔════╝████╗ ████║██╔════╝");
@@ -97,8 +95,8 @@ public class StudentController {
         System.out.println(cyanBold +" ".repeat(43) +"██║     ╚════██║   ██║   ██╔══██║██║  ██║    ╚════██║██║╚██╔╝██║╚════██");
         System.out.println(cyanBold +" ".repeat(43) +"╚██████╗███████║   ██║   ██║  ██║██████╔╝    ███████║██║ ╚═╝ ██║███████║");
         System.out.println(cyanBold +" ".repeat(43) +" ╚═════╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═════╝     ╚══════╝╚═╝     ╚═╝╚══════╝"+ reset);
-//        System.out.println(cyanBold +" ".repeat(53) +"មជ្ឈមណ្ឌលអភិវឌ្ឍន៍វិទ្យាសាស្រ្ត និង បច្ចេកទេសវិទ្យាកម្រិតខ្ពស់");
-        System.out.println(cyanBold +" ".repeat(50) +"Center Of Science and Technology Advaced Development-CSTAD"+reset);
+        System.out.println(cyanBold +" ".repeat(53) +"មជ្ឈមណ្ឌលអភិវឌ្ឍន៍វិទ្យាសាស្រ្ត និង បច្ចេកទេសវិទ្យាកម្រិតខ្ពស់");
+        System.out.println(cyanBold +" ".repeat(50) +"Center Of Science and Technology Advanced Development-CSTAD"+reset);
 //        System.out.println(cyanBold +" ".repeat(53)+"Advanced"+" ".repeat(2)+ " Development-CDTSD"+ reset);
 
     }
@@ -126,13 +124,11 @@ public class StudentController {
         table.setColumnWidth(1,51,70);
         table.setColumnWidth(2,51,70);
 
-
         System.out.println(table.render());
         System.out.println(" \t".repeat(35) + redColor +"©\uFE0FCopyright-CSTAD" + resetColor);
         System.out.println("=".repeat(156));
         System.out.print("➡️\uFE0F Insert option: ");
     }
-
     private static void clearTransactionFile(String fileName) {
         File file = new File(fileName);
         try {
@@ -154,7 +150,7 @@ public class StudentController {
             try (BufferedReader reader = new BufferedReader(new FileReader(TRANSACTION_FILE_NAME))) {
                 long numRecords = reader.lines().count();
                 if (numRecords > 0) {
-                    System.out.println("[*] SPENT TIME FOR READING DATA: 0.007S");
+//                    System.out.println("[*] SPENT TIME FOR READING DATA: 0.007S");
                     System.out.println("[*] NUMBER OF PENDING RECORDS: " + numRecords);
                     System.out.print("> Commit your pending data record(s) beforehand [Y/N]: ");
                     String choice = scanner.nextLine().toUpperCase();
@@ -186,13 +182,32 @@ public class StudentController {
         String name = scanner.nextLine();
         System.out.println("[➕] STUDENT DATE OF BIRTH");
         System.out.print("1. Year (number): ");
-        Integer year = Integer.parseInt(scanner.nextLine());
-        System.out.print("2. Month (number): ");
-        Integer month = Integer.parseInt(scanner.nextLine());
-        System.out.print("3. Day (number): ");
-        Integer day = Integer.parseInt(scanner.nextLine());
-        LocalDate dateOfBirth = LocalDate.of(year, month, day);
+        int year = Integer.parseInt(scanner.nextLine());
+        int month;
+        int day;
+        do {
+            System.out.print("2. Month (number): ");
+            month = Integer.parseInt(scanner.nextLine());
+            // Check if the month is valid
+            if (month < 1 || month > 12) {
+                System.out.println("Invalid month. Please enter a month between 1 and 12.");
+            } else {
+                break; // Break the loop if the month is valid
+            }
+        } while (true);
 
+        do {
+            System.out.print("3. Day (number): ");
+            day = Integer.parseInt(scanner.nextLine());
+            // Check if the day is valid for the given month
+            if (day < 1 || day > LocalDate.of(year, month, 1).lengthOfMonth()) {
+                System.out.println("Invalid day. Please enter a valid day for the selected month.");
+            } else {
+                break; // Break the loop if the day is valid
+            }
+        } while (true);
+
+        LocalDate dateOfBirth = LocalDate.of(year, month, day);
         System.out.println("[❗️] YOU CAN INSERT MULTI CLASSES BY SPLITTING [,] SYMBOL (C1,02)");
         System.out.print("[➕] Student's class: ");
         String classroom = scanner.nextLine();
@@ -224,7 +239,7 @@ public class StudentController {
         }
     }
     public static void commitDataToFile() {
-        studentService.commitDataFromTransaction();
+       studentService.commitDataFromTransaction();
     }
     private void writeDataToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
@@ -247,67 +262,6 @@ public class StudentController {
         int randomNumber = new Random().nextInt(10000) + 1;
         return String.format("%dCSTAD", randomNumber);
     }
-//    private static List<Student> listAllStudents() {
-//        List<Student> students = studentService.listAllStudents();
-//        int totalPages = (int) Math.ceil((double) students.size() / RECORDS_PER_PAGE);
-//        while (true) {
-//            int startIndex = (currentPage - 1) * RECORDS_PER_PAGE;
-//            int endIndex = Math.min(startIndex + RECORDS_PER_PAGE, students.size());
-//            Table table = new Table(6, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
-//            table.addCell("ID",new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//            table.addCell("STUDENT'S NAME", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//            table.addCell("STUDENT'S DATE OF BIRTH ", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//            table.addCell("STUDENT CLASSROOM", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//            table.addCell("STUDENTS SUBJECT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//            table.addCell("CREATE AT / UPDATE AT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//            table.setColumnWidth(0,25,40);
-//            table.setColumnWidth(1,25,40);
-//            table.setColumnWidth(2,25,40);
-//            table.setColumnWidth(3,25,40);
-//            table.setColumnWidth(4,25,40);
-//            table.setColumnWidth(5,25,40);
-//
-//
-//            for (int i = startIndex; i < endIndex; i++) {
-//                Student student = students.get(i);
-//                table.addCell(student.getId(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//                table.addCell(student.getName(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//                table.addCell(student.getDateOfBirth().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//                table.addCell(student.getClassroom(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//                table.addCell(student.getSubjects(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//                table.addCell(student.getCreateAt().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//            }
-//            System.out.println(table.render());
-//
-//            System.out.println("[\uD83D\uDCA2] Page Number: " + currentPage + "      [\uD83D\uDCA2] Actual record: " + (endIndex - startIndex) + "        [\uD83D\uDCA2] All Record: " + students.size());
-//            System.out.print("[➖]  Previous (P/p) - [➕] Next (n/N) - [\uD83D\uDD01] Back (B/b): ");
-//            String choice = scanner.nextLine().trim().toLowerCase();
-//
-//            switch (choice) {
-//                case "p":
-//                    if (currentPage > 1) {
-//                        currentPage--;
-//                        System.out.println("[❗\uFE0F] PREVIOUS PAGE << [✴\uFE0F] STUDENTS' DATA");
-//                    } else {
-//                        System.out.println("[❗\uFE0F] FIRST PAGE << [✴\uFE0F] STUDENTS' DATA");
-//                    }
-//                    break;
-//                case "n":
-//                    if (currentPage < totalPages) {
-//                        currentPage++;
-//                        System.out.println("[❗\uFE0F] NEXT PAGE << [✴\uFE0F] STUDENTS' DATA");
-//                    } else {
-//                        System.out.println("[❗\uFE0F] LAST PAGE << [✴\uFE0F] STUDENTS' DATA");
-//                    }
-//                    break;
-//                case "b":
-//                    return students;
-//                default:
-//                    System.out.println("⛔\uFE0FInvalid choice! Please try again.");
-//            }
-//        }
-//    }
-
     private static List<Student> listAllStudents() {
         List<Student> students = studentService.listAllStudents();
         int totalPages = (int) Math.ceil((double) students.size() / RECORDS_PER_PAGE);
@@ -328,6 +282,7 @@ public class StudentController {
             table.addCell(cyanBold + "STUDENT CLASSROOM", new CellStyle(CellStyle.HorizontalAlign.CENTER));
             table.addCell(cyanBold + "STUDENTS SUBJECT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
             table.addCell(cyanBold + "CREATE AT / UPDATE AT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+
             table.setColumnWidth(0,25,40);
             table.setColumnWidth(1,25,40);
             table.setColumnWidth(2,25,40);
@@ -357,7 +312,7 @@ public class StudentController {
                 case "p":
                     if (currentPage > 1) {
                         currentPage--;
-                        System.out.println("[❗\uFE0F] PREVIOUS PAGE << [✴\uFE0F] STUDENTS' DATA");
+                        System.out.println("[❗️\uFE0F] PREVIOUS PAGE << [✴️\uFE0F] STUDENTS' DATA");
                     } else {
                         System.out.println("[❗️\uFE0F] FIRST PAGE << [✴️\uFE0F] STUDENTS' DATA");
                     }
@@ -378,11 +333,44 @@ public class StudentController {
         }
     }
 
+//    private static void displaySearchResults(List<Student> students) {
+//        int startIndex = (currentPage - 1) * RECORDS_PER_PAGE;
+//        int endIndex = Math.min(startIndex + RECORDS_PER_PAGE, students.size());
+//        System.out.println("[❗️\uFE0F] LAST PAGE << [✴️\uFE0F] STUDENTS' DATA");
+//        Table table = new Table(6, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
+//        table.addCell("ID", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//        table.addCell("STUDENT'S NAME", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//        table.addCell("STUDENT'S DATE OF BIRTH ", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//        table.addCell("STUDENT CLASSROOM", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//        table.addCell("STUDENTS SUBJECT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//        table.addCell("CREATE AT / UPDATE AT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//        table.setColumnWidth(0,25,40);
+//        table.setColumnWidth(1,25,40);
+//        table.setColumnWidth(2,25,40);
+//        table.setColumnWidth(3,25,40);
+//        table.setColumnWidth(4,25,40);
+//        table.setColumnWidth(5,25,40);
+//
+//        for (int i = startIndex; i < endIndex; i++) {
+//            Student student = students.get(i);
+//            table.addCell(student.getId(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//            table.addCell(student.getName(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//            table.addCell(student.getDateOfBirth().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//            table.addCell(student.getClassroom(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//            table.addCell(student.getSubjects(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//            table.addCell(student.getCreateAt().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//        }
+//        System.out.println(table.render());
+//        System.out.println("[\uD83D\uDCA2] Page Number: " + currentPage + "      [\uD83D\uDCA2] Actual record: " + (endIndex - startIndex) + "        [\uD83D\uDCA2] All Record: " + students.size());
+//        System.out.print("[➖] Previous (P/p) - [➕] Next (n/N) - [\uD83D\uDD01] Back (B/b): ");
+//        scanner.nextLine();
+//    }
+
     private static void displaySearchResults(List<Student> students) {
         int startIndex = (currentPage - 1) * RECORDS_PER_PAGE;
         int endIndex = Math.min(startIndex + RECORDS_PER_PAGE, students.size());
 
-        System.out.println("[❗\uFE0F] LAST PAGE << [✴\uFE0F] STUDENTS' DATA");
+        System.out.println("[❗️\uFE0F] LAST PAGE << [✴️\uFE0F] STUDENTS' DATA");
         Table table = new Table(6, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
         table.addCell("ID", new CellStyle(CellStyle.HorizontalAlign.CENTER));
         table.addCell("STUDENT'S NAME", new CellStyle(CellStyle.HorizontalAlign.CENTER));
@@ -399,12 +387,14 @@ public class StudentController {
 
         for (int i = startIndex; i < endIndex; i++) {
             Student student = students.get(i);
-            table.addCell(student.getId(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-            table.addCell(student.getName(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-            table.addCell(student.getDateOfBirth().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-            table.addCell(student.getClassroom(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-            table.addCell(student.getSubjects(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-            table.addCell(student.getCreateAt().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            String yellowColor = "\u001B[33m"; //code for colunm
+            String resetColor = "\u001B[0m"; // Reset color
+            table.addCell(yellowColor+student.getId()+resetColor, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(yellowColor+student.getName()+resetColor, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(yellowColor+student.getDateOfBirth().toString()+resetColor, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(yellowColor+student.getClassroom()+resetColor, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(yellowColor+student.getSubjects()+resetColor, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(yellowColor+student.getCreateAt().toString()+resetColor, new CellStyle(CellStyle.HorizontalAlign.CENTER));
         }
         System.out.println(table.render());
 
@@ -413,6 +403,7 @@ public class StudentController {
         scanner.nextLine();
 
     }
+
 
     private static void searchForStudent() {
         System.out.println("[➕] SEARCHING STUDENT");
@@ -428,10 +419,9 @@ public class StudentController {
                 searchStudentById();
                 break;
             default:
-                System.out.println("⛔\uFE0F Invalid option! Please try again.");
+                System.out.println("⛔️\uFE0F Invalid option! Please try again.");
         }
     }
-
     private static List<Student> searchStudentByName() {
         System.out.print("\uD83D\uDD0D Insert student's NAME: ");
         String name = scanner.nextLine();
@@ -444,7 +434,6 @@ public class StudentController {
             displaySearchResults(students);
         }
         try {
-            // search students
             return students.stream().filter(e -> e.getId().equals(name)).toList();
         } catch (NullPointerException exception) {
             System.out.println(STR."[➕] Problem: \{exception.getMessage()}");
@@ -456,7 +445,6 @@ public class StudentController {
         System.out.print("\uD83D\uDD0D Insert student's ID: ");
         String id = scanner.nextLine();
         List<Student> students = studentService.searchStudentById(id);
-
         if (students.isEmpty()) {
             System.out.println("\uD83D\uDD0D Student not found.");
             displaySearchResults(students);
@@ -479,32 +467,51 @@ public class StudentController {
         List<Student> students = studentService.searchStudentById(id);
         //        displaySearchResults(students);
         if (!students.isEmpty()) {
-            System.out.println("[❗\uFE0F] Enter updated student details:");
-
+            System.out.println("[❗️\uFE0F] Enter updated student details:");
             // Prompt user to input updated details
-            System.out.print("[❗\uFE0F] Enter updated name: ");
+            System.out.print("[❗️\uFE0F] Enter updated name: ");
             String name = scanner.nextLine();
-
-            // Capture and parse the updated date of birth
-            System.out.println("[❗\uFE0F] Enter updated date of birth ");
+            System.out.println("[❗️\uFE0F] Enter updated date of birth ");
+            System.out.println("[➕] STUDENT DATE OF BIRTH");
             System.out.print("1. Year (number): ");
             int year = Integer.parseInt(scanner.nextLine());
-            System.out.print("2. Month (number): ");
-            int month = Integer.parseInt(scanner.nextLine());
-            System.out.print("3. Day (number): ");
-            int day = Integer.parseInt(scanner.nextLine());
+            int month;
+            int day;
+            do {
+                System.out.print("2. Month (number): ");
+                month = Integer.parseInt(scanner.nextLine());
+                // Check if the month is valid
+                if (month < 1 || month > 12) {
+                    System.out.println("Invalid month. Please enter a month between 1 and 12.");
+                } else {
+                    break; // Break the loop if the month is valid
+                }
+            } while (true);
+
+            do {
+                System.out.print("3. Day (number): ");
+                day = Integer.parseInt(scanner.nextLine());
+                // Check if the day is valid for the given month
+                if (day < 1 || day > LocalDate.of(year, month, 1).lengthOfMonth()) {
+                    System.out.println("Invalid day. Please enter a valid day for the selected month.");
+                } else {
+                    break; // Break the loop if the day is valid
+                }
+            } while (true);
+//                int year = 0,month = 0,day = 0;
             LocalDate dob = LocalDate.of(year, month, day);
 
-            System.out.println("[❗\uFE0F] YOU CAN INSERT MULTI CLASSES BY SPLITTING [,] SYMBOL (C1,02)");
+            System.out.println("[❗️\uFE0F] YOU CAN INSERT MULTI CLASSES BY SPLITTING [,] SYMBOL (C1,02)");
             System.out.print("[+] Student's class: ");
             String classroom = scanner.nextLine();
-            System.out.println("[❗\uFE0F] YOU CAN INSERT MULTI SUBJECTS BY SPLITTING [,] SYMBOL (S1, 52)");
+            System.out.println("[❗️\uFE0F] YOU CAN INSERT MULTI SUBJECTS BY SPLITTING [,] SYMBOL (S1, 52)");
             System.out.print("[➕] Subject studied: ");
             String subjects = scanner.nextLine();
 
             LocalDate createAt = LocalDate.now();
             // Create a new Student object with updated details
             Student updatedStudent = new Student(id, name, dob, classroom, subjects,createAt);
+
 
             // Call the service method to update the student
             Student updated = studentService.updateStudentById(id, updatedStudent);
@@ -536,7 +543,6 @@ public class StudentController {
         }
         return deletedStudent;
     }
-
     private static void deleteAllData() {
         System.out.print("Are you sure you want to delete all data? (Y/N) :");
         String choice = scanner.nextLine().toUpperCase();
@@ -548,16 +554,15 @@ public class StudentController {
         } else if (choice.equals("N")) {
             System.out.println("Operation canceled.");
         } else {
-            System.out.println("⛔\uFE0F Invalid choice. Please enter Y or N.");
+            System.out.println("⛔️\uFE0F Invalid choice. Please enter Y or N.");
         }
     }
 
+    ///old2
     private static void generateDataToFile() {
         System.out.print("[➕] Number of objects you want to generate (100M - 100_000_000): ");
         int numRecords = Integer.parseInt(scanner.nextLine());
-
         long startTime = System.currentTimeMillis();
-
         // Define the number of threads to use
         int numThreads = Runtime.getRuntime().availableProcessors();
         ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
@@ -581,9 +586,10 @@ public class StudentController {
         }
 
         long endTime = System.currentTimeMillis();
-        double elapsedTime = (endTime - startTime) / 10000.00;
+        double elapsedTime = (endTime - startTime) / 1000.0;
 
         System.out.printf("[➕] SPENT TIME FOR WRITING DATA: %.3f S%n", elapsedTime);
         System.out.printf("[➕] WROTE DATA %d RECORD SUCCESSFULLY.%n", numRecords);
     }
+
 }
