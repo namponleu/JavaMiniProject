@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class View {
-    private static final Scanner scanner = new Scanner(System.in);
+    public static final Scanner scanner = new Scanner(System.in);
 
     public static void displayStudents(List<Student> students) {
         System.out.println("[*] STUDENTS' DATA");
