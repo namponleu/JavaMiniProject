@@ -32,7 +32,7 @@ public class StudentController {
 
 
     private static int currentPage = 1;
-    private static final int RECORDS_PER_PAGE = 10;
+    private static final int RECORDS_PER_PAGE = 5;
 
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
@@ -84,37 +84,53 @@ public class StudentController {
         }
     }
 
-    public static void displayTitle() {
-        System.out.println("\t".repeat(5) + " ██████╗███████╗████████╗ █████╗ ██████╗     ███████╗███╗   ███╗███████╗");
-        System.out.println("\t".repeat(5) + "██╔════╝██╔════╝╚══██╔══╝██╔══██╗██╔══██╗    ██╔════╝████╗ ████║██╔════╝");
-        System.out.println("\t".repeat(5) + "██║     ███████╗   ██║   ███████║██║  ██║    ███████╗██╔████╔██║███████╗");
-        System.out.println("\t".repeat(5) + "██║     ╚════██║   ██║   ██╔══██║██║  ██║    ╚════██║██║╚██╔╝██║╚════██║");
-        System.out.println("\t".repeat(5) + "╚██████╗███████║   ██║   ██║  ██║██████╔╝    ███████║██║ ╚═╝ ██║███████║");
-        System.out.println("\t".repeat(5) + " ╚═════╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═════╝     ╚══════╝╚═╝     ╚═╝╚══════╝");
+    private static void displayTitle() {
+        String reset = "\u001B[0m";  // Reset color
+        String cyanBold = "\u001B[1;36m"; // Cyan color and bold
+        String fontEnglish = "\u001B[3m"; // Italic font style
+
+
+        System.out.println(cyanBold +"");
+        System.out.println(cyanBold +" ".repeat(43) +" ██████╗███████╗████████╗ █████╗ ██████╗     ███████╗███╗   ███╗███████╗");
+        System.out.println(cyanBold +" ".repeat(43) +"██╔════╝██╔════╝╚══██╔══╝██╔══██╗██╔══██╗    ██╔════╝████╗ ████║██╔════╝");
+        System.out.println(cyanBold +" ".repeat(43) +"██║     ███████╗   ██║   ███████║██║  ██║    ███████╗██╔████╔██║███████╗");
+        System.out.println(cyanBold +" ".repeat(43) +"██║     ╚════██║   ██║   ██╔══██║██║  ██║    ╚════██║██║╚██╔╝██║╚════██");
+        System.out.println(cyanBold +" ".repeat(43) +"╚██████╗███████║   ██║   ██║  ██║██████╔╝    ███████║██║ ╚═╝ ██║███████║");
+        System.out.println(cyanBold +" ".repeat(43) +" ╚═════╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═════╝     ╚══════╝╚═╝     ╚═╝╚══════╝"+ reset);
+//        System.out.println(cyanBold +" ".repeat(53) +"មជ្ឈមណ្ឌលអភិវឌ្ឍន៍វិទ្យាសាស្រ្ត និង បច្ចេកទេសវិទ្យាកម្រិតខ្ពស់");
+        System.out.println(cyanBold +" ".repeat(50) +"Center Of Science and Technology Advaced Development-CSTAD"+reset);
+//        System.out.println(cyanBold +" ".repeat(53)+"Advanced"+" ".repeat(2)+ " Development-CDTSD"+ reset);
+
     }
 
-    public static void displayMenu() {
+    private static void displayMenu() {
+        // Add new Code Today
+        String reset = "\u001B[0m";
+        String cyanBold = "\u001B[1;36m";
+        String redColor = "\u001B[31m"; // Red color
+        String resetColor = "\u001B[0m"; // Reset color
+        //The End Code For Today
         //Menu
-        System.out.println("=".repeat(135));
+        System.out.println("=".repeat(156));
         Table table = new Table(3, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
-        table.addCell("[1].ADD NEW STUDENT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell("[2].LIST ALL STUDENTS", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell("[3].COMMIT DATA TO FILE", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell("[4].SEARCH FOR STUDENT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell("[5].UPDATE STUDENT'S INFO BY ID", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell("[6].DELETE STUDENT'S DATA", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell("[7].GENERATE DATA TO FILE", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell("[8].DELETE/CLEAR ALL DATA FROM DATA STORE", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell("[0,99]. EXIT",new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell(cyanBold + "[1].ADD NEW STUDENT"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell(cyanBold + "[2].LIST ALL STUDENTS"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell(cyanBold + "[3].COMMIT DATA TO FILE"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell(cyanBold + "[4].SEARCH FOR STUDENT"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell(cyanBold + "[5].UPDATE STUDENT'S INFO BY ID"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell(cyanBold + "[6].DELETE STUDENT'S DATA"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell(cyanBold + "[7].GENERATE DATA TO FILE"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell(cyanBold + "[8].DELETE/CLEAR ALL DATA FROM DATA STORE"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell(cyanBold + "[0,99]. EXIT"+reset,new CellStyle(CellStyle.HorizontalAlign.CENTER));
         table.setColumnWidth(0,51,70);
         table.setColumnWidth(1,51,70);
         table.setColumnWidth(2,51,70);
 
 
         System.out.println(table.render());
-        System.out.println("\t".repeat(35) + "Copyright-CSTAD");
+        System.out.println(" \t".repeat(35) + redColor +"©\uFE0FCopyright-CSTAD" + resetColor);
         System.out.println("=".repeat(156));
-        System.out.print("➡\uFE0F Insert option: ");
+        System.out.print("➡️\uFE0F Insert option: ");
     }
 
     private static void clearTransactionFile(String fileName) {
@@ -231,19 +247,87 @@ public class StudentController {
         int randomNumber = new Random().nextInt(10000) + 1;
         return String.format("%dCSTAD", randomNumber);
     }
+//    private static List<Student> listAllStudents() {
+//        List<Student> students = studentService.listAllStudents();
+//        int totalPages = (int) Math.ceil((double) students.size() / RECORDS_PER_PAGE);
+//        while (true) {
+//            int startIndex = (currentPage - 1) * RECORDS_PER_PAGE;
+//            int endIndex = Math.min(startIndex + RECORDS_PER_PAGE, students.size());
+//            Table table = new Table(6, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
+//            table.addCell("ID",new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//            table.addCell("STUDENT'S NAME", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//            table.addCell("STUDENT'S DATE OF BIRTH ", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//            table.addCell("STUDENT CLASSROOM", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//            table.addCell("STUDENTS SUBJECT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//            table.addCell("CREATE AT / UPDATE AT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//            table.setColumnWidth(0,25,40);
+//            table.setColumnWidth(1,25,40);
+//            table.setColumnWidth(2,25,40);
+//            table.setColumnWidth(3,25,40);
+//            table.setColumnWidth(4,25,40);
+//            table.setColumnWidth(5,25,40);
+//
+//
+//            for (int i = startIndex; i < endIndex; i++) {
+//                Student student = students.get(i);
+//                table.addCell(student.getId(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//                table.addCell(student.getName(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//                table.addCell(student.getDateOfBirth().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//                table.addCell(student.getClassroom(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//                table.addCell(student.getSubjects(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//                table.addCell(student.getCreateAt().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+//            }
+//            System.out.println(table.render());
+//
+//            System.out.println("[\uD83D\uDCA2] Page Number: " + currentPage + "      [\uD83D\uDCA2] Actual record: " + (endIndex - startIndex) + "        [\uD83D\uDCA2] All Record: " + students.size());
+//            System.out.print("[➖]  Previous (P/p) - [➕] Next (n/N) - [\uD83D\uDD01] Back (B/b): ");
+//            String choice = scanner.nextLine().trim().toLowerCase();
+//
+//            switch (choice) {
+//                case "p":
+//                    if (currentPage > 1) {
+//                        currentPage--;
+//                        System.out.println("[❗\uFE0F] PREVIOUS PAGE << [✴\uFE0F] STUDENTS' DATA");
+//                    } else {
+//                        System.out.println("[❗\uFE0F] FIRST PAGE << [✴\uFE0F] STUDENTS' DATA");
+//                    }
+//                    break;
+//                case "n":
+//                    if (currentPage < totalPages) {
+//                        currentPage++;
+//                        System.out.println("[❗\uFE0F] NEXT PAGE << [✴\uFE0F] STUDENTS' DATA");
+//                    } else {
+//                        System.out.println("[❗\uFE0F] LAST PAGE << [✴\uFE0F] STUDENTS' DATA");
+//                    }
+//                    break;
+//                case "b":
+//                    return students;
+//                default:
+//                    System.out.println("⛔\uFE0FInvalid choice! Please try again.");
+//            }
+//        }
+//    }
+
     private static List<Student> listAllStudents() {
         List<Student> students = studentService.listAllStudents();
         int totalPages = (int) Math.ceil((double) students.size() / RECORDS_PER_PAGE);
         while (true) {
+            //add new Code Today
+
+            // End new code Today
             int startIndex = (currentPage - 1) * RECORDS_PER_PAGE;
             int endIndex = Math.min(startIndex + RECORDS_PER_PAGE, students.size());
+
             Table table = new Table(6, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
-            table.addCell("ID",new CellStyle(CellStyle.HorizontalAlign.CENTER));
-            table.addCell("STUDENT'S NAME", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-            table.addCell("STUDENT'S DATE OF BIRTH ", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-            table.addCell("STUDENT CLASSROOM", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-            table.addCell("STUDENTS SUBJECT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-            table.addCell("CREATE AT / UPDATE AT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            String reset = "\u001B[0m";
+            String cyanBold = "\u001B[1;36m";
+
+            table.addCell(cyanBold + "ID",new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(cyanBold + "STUDENT'S NAME", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(cyanBold + "STUDENT'S DATE OF BIRTH ", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(cyanBold + "STUDENT CLASSROOM", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(cyanBold + "STUDENTS SUBJECT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(cyanBold + "CREATE AT / UPDATE AT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
             table.setColumnWidth(0,25,40);
             table.setColumnWidth(1,25,40);
             table.setColumnWidth(2,25,40);
@@ -254,12 +338,14 @@ public class StudentController {
 
             for (int i = startIndex; i < endIndex; i++) {
                 Student student = students.get(i);
-                table.addCell(student.getId(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-                table.addCell(student.getName(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-                table.addCell(student.getDateOfBirth().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-                table.addCell(student.getClassroom(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-                table.addCell(student.getSubjects(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-                table.addCell(student.getCreateAt().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                String yellowColor = "\u001B[33m"; //code for colunm
+                String resetColor = "\u001B[0m"; // Reset color
+                table.addCell(yellowColor+student.getId()+resetColor, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(yellowColor+student.getName()+ resetColor, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(yellowColor+student.getDateOfBirth().toString()+ resetColor, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(yellowColor+student.getClassroom()+resetColor, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(yellowColor+student.getSubjects()+ resetColor, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+                table.addCell(yellowColor+student.getCreateAt().toString()+ resetColor, new CellStyle(CellStyle.HorizontalAlign.CENTER));
             }
             System.out.println(table.render());
 
@@ -271,23 +357,23 @@ public class StudentController {
                 case "p":
                     if (currentPage > 1) {
                         currentPage--;
-                        System.out.println("[❗\uFE0F] FIRST PAGE << [✴\uFE0F] STUDENTS' DATA");
+                        System.out.println("[❗\uFE0F] PREVIOUS PAGE << [✴\uFE0F] STUDENTS' DATA");
                     } else {
-                        System.out.println("[❗\uFE0F] ALREADY FIRST PAGE << [✴\uFE0F] STUDENTS' DATA");
+                        System.out.println("[❗️\uFE0F] FIRST PAGE << [✴️\uFE0F] STUDENTS' DATA");
                     }
                     break;
                 case "n":
                     if (currentPage < totalPages) {
                         currentPage++;
-                        System.out.println("[❗\uFE0F] LAST PAGE << [✴\uFE0F] STUDENTS' DATA");
+                        System.out.println("[❗️\uFE0F] NEXT PAGE << [✴️\uFE0F] STUDENTS' DATA");
                     } else {
-                        System.out.println("[❗\uFE0F] ALREADY LAST PAGE << [✴\uFE0F] STUDENTS' DATA");
+                        System.out.println("[❗️\uFE0F] LAST PAGE << [✴️\uFE0F] STUDENTS' DATA");
                     }
                     break;
                 case "b":
                     return students;
                 default:
-                    System.out.println("⛔\uFE0FInvalid choice! Please try again.");
+                    System.out.println("⛔️\uFE0FInvalid choice! Please try again.");
             }
         }
     }
