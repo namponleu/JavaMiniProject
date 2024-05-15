@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 8299CSTAD,nana,2002-11-11,M3,Jaja,2024-05-13
 851CSTAD,makara,2000-12-11,moring,java,2024-05-13
 8635CSTAD,kanika,2000-12-21,Moring,web,2024-05-13
@@ -58,3 +59,5 @@
 1664CSTAD,mkt,2000-11-11,Java,jva,2024-05-14
 2021CSTAD,koko,2000-11-11,Mo,Java,2024-05-14
 >>>>>>> bbf589e99bff629c490fffff14b07af167b77b21
+=======
+>>>>>>> a4eac52b7e265e45f7691d93efb0e61402cb5371
