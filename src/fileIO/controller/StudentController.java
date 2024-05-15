@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import static java.lang.StringTemplate.STR;
+
 public class StudentController {
     private static StudentService studentService = null;
     private static Scanner scanner = null;
@@ -29,7 +30,6 @@ public class StudentController {
     private static final String TRANSACTION_FILE_NAME = "src/allFile/TransactionFile.txt";
     //    private final List<Student> students;
     private List<Student> students = new ArrayList<>();
-
 
     private static int currentPage = 1;
     private static final int RECORDS_PER_PAGE = 5;
@@ -89,16 +89,15 @@ public class StudentController {
         String cyanBold = "\u001B[1;36m"; // Cyan color and bold
         String fontEnglish = "\u001B[3m"; // Italic font style
 
-
         System.out.println(cyanBold +"");
-        System.out.println(cyanBold +" ".repeat(43) +" ██████╗███████╗████████╗ █████╗ ██████╗     ███████╗███╗   ███╗███████╗");
-        System.out.println(cyanBold +" ".repeat(43) +"██╔════╝██╔════╝╚══██╔══╝██╔══██╗██╔══██╗    ██╔════╝████╗ ████║██╔════╝");
-        System.out.println(cyanBold +" ".repeat(43) +"██║     ███████╗   ██║   ███████║██║  ██║    ███████╗██╔████╔██║███████╗");
-        System.out.println(cyanBold +" ".repeat(43) +"██║     ╚════██║   ██║   ██╔══██║██║  ██║    ╚════██║██║╚██╔╝██║╚════██");
-        System.out.println(cyanBold +" ".repeat(43) +"╚██████╗███████║   ██║   ██║  ██║██████╔╝    ███████║██║ ╚═╝ ██║███████║");
-        System.out.println(cyanBold +" ".repeat(43) +" ╚═════╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═════╝     ╚══════╝╚═╝     ╚═╝╚══════╝"+ reset);
+        System.out.println(cyanBold + " ".repeat(43) + " ██████╗███████╗████████╗ █████╗ ██████╗     ███████╗███╗   ███╗███████╗");
+        System.out.println(cyanBold + " ".repeat(43) + "██╔════╝██╔════╝╚══██╔══╝██╔══██╗██╔══██╗    ██╔════╝████╗ ████║██╔════╝");
+        System.out.println(cyanBold + " ".repeat(43) + "██║     ███████╗   ██║   ███████║██║  ██║    ███████╗██╔████╔██║███████╗");
+        System.out.println(cyanBold + " ".repeat(43) + "██║     ╚════██║   ██║   ██╔══██║██║  ██║    ╚════██║██║╚██╔╝██║╚════██");
+        System.out.println(cyanBold + " ".repeat(43) + "╚██████╗███████║   ██║   ██║  ██║██████╔╝    ███████║██║ ╚═╝ ██║███████║");
+        System.out.println(cyanBold + " ".repeat(43) + " ╚═════╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═════╝     ╚══════╝╚═╝     ╚═╝╚══════╝" + reset);
 //        System.out.println(cyanBold +" ".repeat(53) +"មជ្ឈមណ្ឌលអភិវឌ្ឍន៍វិទ្យាសាស្រ្ត និង បច្ចេកទេសវិទ្យាកម្រិតខ្ពស់");
-        System.out.println(cyanBold +" ".repeat(50) +"Center Of Science and Technology Advaced Development-CSTAD"+reset);
+        System.out.println(cyanBold + " ".repeat(50) + "Center Of Science and Technology Advaced Development-CSTAD" + reset);
 //        System.out.println(cyanBold +" ".repeat(53)+"Advanced"+" ".repeat(2)+ " Development-CDTSD"+ reset);
 
     }
@@ -113,19 +112,19 @@ public class StudentController {
         //Menu
         System.out.println("=".repeat(156));
         Table table = new Table(3, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
-        table.addCell(cyanBold + "[1].ADD NEW STUDENT"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell(cyanBold + "[2].LIST ALL STUDENTS"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell(cyanBold + "[3].COMMIT DATA TO FILE"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell(cyanBold + "[4].SEARCH FOR STUDENT"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell(cyanBold + "[5].UPDATE STUDENT'S INFO BY ID"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell(cyanBold + "[6].DELETE STUDENT'S DATA"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell(cyanBold + "[7].GENERATE DATA TO FILE"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell(cyanBold + "[8].DELETE/CLEAR ALL DATA FROM DATA STORE"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
-        table.addCell(cyanBold + "[0,99]. EXIT"+reset,new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell(cyanBold + "[1].ADD NEW STUDENT" + reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell(cyanBold + "[2].LIST ALL STUDENTS" + reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell(cyanBold + "[3].COMMIT DATA TO FILE" + reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell(cyanBold + "[4].SEARCH FOR STUDENT" + reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell(cyanBold + "[5].UPDATE STUDENT'S INFO BY ID" + reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell(cyanBold + "[6].DELETE STUDENT'S DATA"+ reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell(cyanBold + "[7].GENERATE DATA TO FILE"+ reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell(cyanBold + "[8].DELETE/CLEAR ALL DATA FROM DATA STORE" + reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+        table.addCell(cyanBold + "[0,99]. EXIT" + reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+
         table.setColumnWidth(0,51,70);
         table.setColumnWidth(1,51,70);
         table.setColumnWidth(2,51,70);
-
 
         System.out.println(table.render());
         System.out.println(" \t".repeat(35) + redColor +"©\uFE0FCopyright-CSTAD" + resetColor);
@@ -149,6 +148,7 @@ public class StudentController {
             e.printStackTrace();
         }
     }
+
     private static boolean checkPendingTransactions() {
         if (Files.exists(Paths.get(TRANSACTION_FILE_NAME))) {
             try (BufferedReader reader = new BufferedReader(new FileReader(TRANSACTION_FILE_NAME))) {

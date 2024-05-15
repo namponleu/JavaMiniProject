@@ -21,6 +21,7 @@ public class StudentServiceImpl implements StudentService {
         this.students = new ArrayList<>();
         readDataFromFile();
     }
+
     private void readDataFromFile() {
         String line = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
@@ -84,11 +85,6 @@ public class StudentServiceImpl implements StudentService {
         System.out.println("Data committed to file successfully.");
     }
 
-//    @Override
-//    public void commitDataFromTransaction() {
-//
-//    }
-
     private void clearTransactionFile(String fileName) {
         File file = new File(fileName);
         try {
@@ -105,7 +101,6 @@ public class StudentServiceImpl implements StudentService {
             e.printStackTrace();
         }
     }
-
 
     @Override
     public void commitDataFromTransaction() {
@@ -147,7 +142,7 @@ public class StudentServiceImpl implements StudentService {
 //                    StudentController.displayTitle();
 //                    StudentController.displayMenu();
                 StudentController.start();
-//                } else if (choice.equals("N")) {
+//                 else if (choice.equals("N")) {
 //                    System.out.println("Operation canceled.");
 //                } else {
 //                    System.out.println("Invalid choice. Please enter Y or N.");
