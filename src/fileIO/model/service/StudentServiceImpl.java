@@ -1,5 +1,8 @@
 package fileIO.model.service;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 169b4f3fea616fa6c80048bdea54fdb383087d77
 import fileIO.controller.StudentController;
 import fileIO.model.Student;
 import java.io.*;
@@ -12,7 +15,10 @@ import java.util.Arrays;
 import java.util.List;
 import static fileIO.controller.StudentController.*;
 import static fileIO.view.View.scanner;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 169b4f3fea616fa6c80048bdea54fdb383087d77
 public class StudentServiceImpl implements StudentService {
     private final String FILE_NAME = "src/allFile/students.txt";
     private final List<Student> students;
@@ -47,7 +53,10 @@ public class StudentServiceImpl implements StudentService {
             e.printStackTrace();
         }
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 169b4f3fea616fa6c80048bdea54fdb383087d77
     private void writeDataToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
             writer.flush();
@@ -65,14 +74,20 @@ public class StudentServiceImpl implements StudentService {
             e.printStackTrace();
         }
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 169b4f3fea616fa6c80048bdea54fdb383087d77
     @Override
     public int addNewStudent(Student student) {
         students.add(student);
         writeDataToFile();
         return students.size();
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 169b4f3fea616fa6c80048bdea54fdb383087d77
     @Override
     public List<Student> listAllStudents() {
         return students;
@@ -83,12 +98,15 @@ public class StudentServiceImpl implements StudentService {
         writeDataToFile();
         System.out.println("Data committed to file successfully.");
     }
+<<<<<<< HEAD
 
 //    @Override
 //    public void commitDataFromTransaction() {
 //
 //    }
 
+=======
+>>>>>>> 169b4f3fea616fa6c80048bdea54fdb383087d77
     private void clearTransactionFile(String fileName) {
         File file = new File(fileName);
         try {
@@ -105,6 +123,7 @@ public class StudentServiceImpl implements StudentService {
             e.printStackTrace();
         }
     }
+<<<<<<< HEAD
 
 
     @Override
@@ -153,6 +172,37 @@ public class StudentServiceImpl implements StudentService {
 //                } else {
 //                    System.out.println("Invalid choice. Please enter Y or N.");
 //                }
+=======
+    @Override
+    public void commitDataFromTransaction() {
+        String transactionFileName = "src/allFile/TransactionFile.txt";
+        if (Files.exists(Paths.get(transactionFileName))) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(transactionFileName))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        try {
+                            // Process and add transaction data to main data
+                            String[] data = line.split(",");
+                            String id = data[0];
+                            String name = data[1];
+                            LocalDate dateOfBirth = LocalDate.parse(data[2]);
+                            String classroom = data[3];
+                            String subjects = data[4];
+                            LocalDate createdAt = LocalDate.parse(data[5]);
+
+                            Student student = new Student(id, name, dateOfBirth, classroom, subjects, createdAt);
+                            students.add(student);
+                        } catch (DateTimeParseException | ArrayIndexOutOfBoundsException e) {
+                            System.out.println("Error processing transaction data: " + e.getMessage());
+                        }
+                    }
+                    // Write the updated data to the main file
+                    writeDataToFile();
+                    System.out.println("Data committed successfully.");
+                    // Clear transaction file after committing data
+                    clearTransactionFile(transactionFileName);
+                    StudentController.start();
+>>>>>>> 169b4f3fea616fa6c80048bdea54fdb383087d77
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -160,8 +210,11 @@ public class StudentServiceImpl implements StudentService {
             System.out.println("No transaction file found.");
         }
     }
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 169b4f3fea616fa6c80048bdea54fdb383087d77
     @Override
     public List<Student> searchStudentById(String id) {
         List<Student> result = new ArrayList<>();
@@ -172,7 +225,10 @@ public class StudentServiceImpl implements StudentService {
         }
         return result;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 169b4f3fea616fa6c80048bdea54fdb383087d77
     @Override
     public List<Student> searchStudentByName(String name) {
         List<Student> result = new ArrayList<>();
@@ -183,7 +239,10 @@ public class StudentServiceImpl implements StudentService {
         }
         return result;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 169b4f3fea616fa6c80048bdea54fdb383087d77
     @Override
     public Student deleteStudentById(String id) {
         Student studentToRemove = null;
@@ -199,7 +258,10 @@ public class StudentServiceImpl implements StudentService {
         }
         return studentToRemove;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 169b4f3fea616fa6c80048bdea54fdb383087d77
     @Override
     public Student updateStudentById(String id, Student updatedStudent) {
         try {
@@ -226,13 +288,19 @@ public class StudentServiceImpl implements StudentService {
             return null;
         }
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 169b4f3fea616fa6c80048bdea54fdb383087d77
     @Override
     public void deleteAllStudents() {
         students.clear();
         writeDataToFile();
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 169b4f3fea616fa6c80048bdea54fdb383087d77
     @Override
     public void generateRecords(int startIndex, int endIndex) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
@@ -240,7 +308,11 @@ public class StudentServiceImpl implements StudentService {
                 // Generate student data (ID, name, date of birth, etc.)
                 String id = generateDefaultId();
                 String name = "Student" + (i + 1);
+<<<<<<< HEAD
                 LocalDate dateOfBirth = LocalDate.of(2000 + i % 20, (i % 12) + 1, (i % 28) + 1);
+=======
+                LocalDate dateOfBirth = LocalDate.of(2000 + i % 20, (i % 12) + 1, (i % 28) + 1); // Random date of birth
+>>>>>>> 169b4f3fea616fa6c80048bdea54fdb383087d77
                 String classroom = "Class" + (i % 5 + 1);
                 String subjects = "Subject" + (i % 8 + 1);
                 LocalDate createAt = LocalDate.now(); // Corrected creation date
