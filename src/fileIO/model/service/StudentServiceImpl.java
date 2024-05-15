@@ -240,7 +240,7 @@ public class StudentServiceImpl implements StudentService {
                 // Generate student data (ID, name, date of birth, etc.)
                 String id = generateDefaultId();
                 String name = "Student" + (i + 1);
-                LocalDate dateOfBirth = LocalDate.of(2000 + i % 20, (i % 12) + 1, (i % 28) + 1); // Random date of birth
+                LocalDate dateOfBirth = LocalDate.of(2000 + i % 20, (i % 12) + 1, (i % 28) + 1);
                 String classroom = "Class" + (i % 5 + 1);
                 String subjects = "Subject" + (i % 8 + 1);
                 LocalDate createAt = LocalDate.now(); // Corrected creation date

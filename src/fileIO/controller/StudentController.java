@@ -165,7 +165,7 @@ public class StudentController {
                         System.out.println("Invalid choice. Please enter Y or N.");
                     }
                 } else {
-                    System.out.println("No pending records.");
+//                    System.out.println("No pending records.");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -332,39 +332,6 @@ public class StudentController {
             }
         }
     }
-
-//    private static void displaySearchResults(List<Student> students) {
-//        int startIndex = (currentPage - 1) * RECORDS_PER_PAGE;
-//        int endIndex = Math.min(startIndex + RECORDS_PER_PAGE, students.size());
-//        System.out.println("[❗️\uFE0F] LAST PAGE << [✴️\uFE0F] STUDENTS' DATA");
-//        Table table = new Table(6, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
-//        table.addCell("ID", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//        table.addCell("STUDENT'S NAME", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//        table.addCell("STUDENT'S DATE OF BIRTH ", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//        table.addCell("STUDENT CLASSROOM", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//        table.addCell("STUDENTS SUBJECT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//        table.addCell("CREATE AT / UPDATE AT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//        table.setColumnWidth(0,25,40);
-//        table.setColumnWidth(1,25,40);
-//        table.setColumnWidth(2,25,40);
-//        table.setColumnWidth(3,25,40);
-//        table.setColumnWidth(4,25,40);
-//        table.setColumnWidth(5,25,40);
-//
-//        for (int i = startIndex; i < endIndex; i++) {
-//            Student student = students.get(i);
-//            table.addCell(student.getId(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//            table.addCell(student.getName(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//            table.addCell(student.getDateOfBirth().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//            table.addCell(student.getClassroom(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//            table.addCell(student.getSubjects(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//            table.addCell(student.getCreateAt().toString(), new CellStyle(CellStyle.HorizontalAlign.CENTER));
-//        }
-//        System.out.println(table.render());
-//        System.out.println("[\uD83D\uDCA2] Page Number: " + currentPage + "      [\uD83D\uDCA2] Actual record: " + (endIndex - startIndex) + "        [\uD83D\uDCA2] All Record: " + students.size());
-//        System.out.print("[➖] Previous (P/p) - [➕] Next (n/N) - [\uD83D\uDD01] Back (B/b): ");
-//        scanner.nextLine();
-//    }
 
     private static void displaySearchResults(List<Student> students) {
         int startIndex = (currentPage - 1) * RECORDS_PER_PAGE;
