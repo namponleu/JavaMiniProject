@@ -18,8 +18,5 @@ public interface StudentService {
     Student updateStudentById(String id, Student updatedStudent);
     void deleteAllStudents();
     void generateRecords(int startIndex, int endIndex);
-<<<<<<< HEAD
 
-=======
->>>>>>> 169b4f3fea616fa6c80048bdea54fdb383087d77
 }
