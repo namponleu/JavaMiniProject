@@ -246,6 +246,232 @@ public class StudentController {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
             writer.flush();
             for (Student student : students) {
+=======
+    package fileIO.controller;
+    import fileIO.model.Student;
+    import fileIO.model.service.StudentService;
+    import org.nocrala.tools.texttablefmt.BorderStyle;
+    import org.nocrala.tools.texttablefmt.CellStyle;
+    import org.nocrala.tools.texttablefmt.ShownBorders;
+    import org.nocrala.tools.texttablefmt.Table;
+    import java.io.*;
+    import java.nio.file.Files;
+    import java.nio.file.Path;
+    import java.nio.file.Paths;
+    import java.time.LocalDate;
+    import java.time.format.DateTimeParseException;
+    import java.util.ArrayList;
+    import java.util.List;
+    import java.util.Random;
+    import java.util.Scanner;
+    import java.util.concurrent.ExecutionException;
+    import java.util.concurrent.ExecutorService;
+    import java.util.concurrent.Executors;
+    import java.util.concurrent.Future;
+    import static java.lang.StringTemplate.STR;
+    public class StudentController {
+        private static StudentService studentService = null;
+        private static Scanner scanner = null;
+        private final String FILE_NAME = "src/allFile/students.txt";
+        private static final String TRANSACTION_FILE_NAME = "src/allFile/TransactionFile.txt";
+        private List<Student> students = new ArrayList<>();
+        private static int currentPage = 1;
+        private static final int RECORDS_PER_PAGE = 10;
+        public StudentController(StudentService studentService) {
+            this.studentService = studentService;
+            this.scanner = new Scanner(System.in);
+        }
+        public static void start() {
+            // Check for pending transactions
+            boolean transactionsProcessed = checkPendingTransactions();
+            if (!transactionsProcessed) {
+                int option;
+                displayTitle();
+                do {
+                    displayMenu();
+                    option = Integer.parseInt(scanner.nextLine());
+                    switch (option) {
+                        case 1:
+                            addNewStudent();
+                            break;
+                        case 2:
+                            listAllStudents();
+                            break;
+                        case 3:
+                            commitDataToFile();
+                            break;
+                        case 4:
+                            searchForStudent();
+                            break;
+                        case 5:
+                            updateStudentById();
+                            break;
+                        case 6:
+                            deleteStudentData();
+                            break;
+                        case 7:
+                            generateDataToFile();
+                            break;
+                        case 8:
+                            deleteAllData();
+                            break;
+                        case 0:
+                        case 99:
+                            System.out.println("Exiting...");
+                            break;
+                        default:
+                            System.out.println("Invalid option! Please try again.");
+                    }
+                } while (option != 0 && option != 99);
+            }
+        }
+
+        private static void displayTitle() {
+            String reset = "\u001B[0m";  // Reset color
+            String cyanBold = "\u001B[1;36m"; // Cyan color and bold
+            String fontEnglish = "\u001B[3m"; // Italic font style
+
+
+            System.out.println(cyanBold +"");
+            System.out.println(cyanBold +" ".repeat(43) +" ██████╗███████╗████████╗ █████╗ ██████╗     ███████╗███╗   ███╗███████╗");
+            System.out.println(cyanBold +" ".repeat(43) +"██╔════╝██╔════╝╚══██╔══╝██╔══██╗██╔══██╗    ██╔════╝████╗ ████║██╔════╝");
+            System.out.println(cyanBold +" ".repeat(43) +"██║     ███████╗   ██║   ███████║██║  ██║    ███████╗██╔████╔██║███████╗");
+            System.out.println(cyanBold +" ".repeat(43) +"██║     ╚════██║   ██║   ██╔══██║██║  ██║    ╚════██║██║╚██╔╝██║╚════██");
+            System.out.println(cyanBold +" ".repeat(43) +"╚██████╗███████║   ██║   ██║  ██║██████╔╝    ███████║██║ ╚═╝ ██║███████║");
+            System.out.println(cyanBold +" ".repeat(43) +" ╚═════╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═════╝     ╚══════╝╚═╝     ╚═╝╚══════╝"+ reset);
+//        System.out.println(cyanBold +" ".repeat(53) +"មជ្ឈមណ្ឌលអភិវឌ្ឍន៍វិទ្យាសាស្រ្ត និង បច្ចេកទេសវិទ្យាកម្រិតខ្ពស់");
+            System.out.println(cyanBold +" ".repeat(50) +"Center Of Science and Technology Advanced Development-CSTAD"+reset);
+//        System.out.println(cyanBold +" ".repeat(53)+"Advanced"+" ".repeat(2)+ " Development-CDTSD"+ reset);
+
+        }
+
+        private static void displayMenu() {
+            // Add new Code Today
+            String reset = "\u001B[0m";
+            String cyanBold = "\u001B[1;36m";
+            String redColor = "\u001B[31m"; // Red color
+            String resetColor = "\u001B[0m"; // Reset color
+            //The End Code For Today
+            //Menu
+            System.out.println("=".repeat(156));
+            Table table = new Table(3, BorderStyle.UNICODE_BOX_HEAVY_BORDER, ShownBorders.ALL);
+            table.addCell(cyanBold + "[1].ADD NEW STUDENT"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(cyanBold + "[2].LIST ALL STUDENTS"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(cyanBold + "[3].COMMIT DATA TO FILE"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(cyanBold + "[4].SEARCH FOR STUDENT"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(cyanBold + "[5].UPDATE STUDENT'S INFO BY ID"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(cyanBold + "[6].DELETE STUDENT'S DATA"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(cyanBold + "[7].GENERATE DATA TO FILE"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(cyanBold + "[8].DELETE/CLEAR ALL DATA FROM DATA STORE"+reset, new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.addCell(cyanBold + "[0,99]. EXIT"+reset,new CellStyle(CellStyle.HorizontalAlign.CENTER));
+            table.setColumnWidth(0,51,70);
+            table.setColumnWidth(1,51,70);
+            table.setColumnWidth(2,51,70);
+
+
+            System.out.println(table.render());
+            System.out.println(" \t".repeat(35) + redColor +"©\uFE0FCopyright-CSTAD" + resetColor);
+            System.out.println("=".repeat(156));
+            System.out.print("➡️\uFE0F Insert option: ");
+        }
+        private static void clearTransactionFile(String fileName) {
+            File file = new File(fileName);
+            try {
+                if (file.exists()) {
+                    FileWriter writer = new FileWriter(file);
+                    writer.write(""); // Clear file contents
+                    writer.close();
+                    System.out.println("Transaction file cleared.");
+                } else {
+                    System.out.println("Transaction file does not exist.");
+                }
+            } catch (IOException e) {
+                System.out.println("Error clearing transaction file: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        private static boolean checkPendingTransactions() {
+            if (Files.exists(Paths.get(TRANSACTION_FILE_NAME))) {
+                try (BufferedReader reader = new BufferedReader(new FileReader(TRANSACTION_FILE_NAME))) {
+                    long numRecords = reader.lines().count();
+                    if (numRecords > 0) {
+                        System.out.println("[*] SPENT TIME FOR READING DATA: 0.007S");
+                        System.out.println("[*] NUMBER OF PENDING RECORDS: " + numRecords);
+                        System.out.print("> Commit your pending data record(s) beforehand [Y/N]: ");
+                        String choice = scanner.nextLine().toUpperCase();
+
+                        if (choice.equals("Y")) {
+                            commitDataToFile();
+                            clearTransactionFile(TRANSACTION_FILE_NAME);
+                            return true;
+                        } else if (choice.equals("N")) {
+                            System.out.println("Operation canceled.");
+                        } else {
+                            System.out.println("Invalid choice. Please enter Y or N.");
+                        }
+                    } else {
+                        System.out.println("No pending records.");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("Transaction file not found.");
+            }
+            return false;
+        }
+private static void addNewStudent() {
+    System.out.println("..............................");
+    System.out.println("➡️ INSERT STUDENT'S INFO");
+    System.out.print("[➕] Insert student's name: ");
+    String name = scanner.nextLine();
+    System.out.println("[➕] STUDENT DATE OF BIRTH");
+    System.out.print("1. Year (number): ");
+    int year = Integer.parseInt(scanner.nextLine());
+    int month;
+    int day;
+    do {
+        System.out.print("2. Month (number): ");
+        month = Integer.parseInt(scanner.nextLine());
+        // Check if the month is valid
+        if (month < 1 || month > 12) {
+            System.out.println("Invalid month. Please enter a month between 1 and 12.");
+        } else {
+            break; // Break the loop if the month is valid
+        }
+    } while (true);
+
+    do {
+        System.out.print("3. Day (number): ");
+        day = Integer.parseInt(scanner.nextLine());
+        // Check if the day is valid for the given month
+        if (day < 1 || day > LocalDate.of(year, month, 1).lengthOfMonth()) {
+            System.out.println("Invalid day. Please enter a valid day for the selected month.");
+        } else {
+            break; // Break the loop if the day is valid
+        }
+    } while (true);
+
+    LocalDate dateOfBirth = LocalDate.of(year, month, day);
+    System.out.println("[❗️] YOU CAN INSERT MULTI CLASSES BY SPLITTING [,] SYMBOL (C1,02)");
+    System.out.print("[➕] Student's class: ");
+    String classroom = scanner.nextLine();
+    System.out.println("[❗️] YOU CAN INSERT MULTI SUBJECTS BY SPLITTING [,] SYMBOL (S1, 52)");
+    System.out.print("[➕] Subject studied: ");
+    String subjects = scanner.nextLine();
+    LocalDate createdAt = LocalDate.now();
+    // Generate default ID with prefix "CSTAD"
+    String id = generateDefaultId();
+    Student student = new Student(id, name, dateOfBirth, classroom, subjects, createdAt);
+    // Write new student's data to the transaction file
+    writeDataToTransactionFile(student);
+    System.out.println("Student data added to the transaction file.");
+}
+        private static void writeDataToTransactionFile(Student student) {
+            String transactionFileName = "src/allFile/TransactionFile.txt";
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(transactionFileName, true))){
+                // Append new student's data to the transaction file
+
                 writer.write(String.format("%s,%s,%s,%s,%s,%s%n",
                         student.getId(),
                         student.getName(),
@@ -285,6 +511,7 @@ public class StudentController {
             table.addCell(cyanBold + "CREATE AT / UPDATE AT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
 
            table.addCell("CREATE AT / UPDATE AT", new CellStyle(CellStyle.HorizontalAlign.CENTER));
+
             table.setColumnWidth(0,25,40);
             table.setColumnWidth(1,25,40);
             table.setColumnWidth(2,25,40);
