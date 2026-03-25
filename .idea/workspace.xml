@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="193073cb-bb90-4cdf-a672-f36d6641c893" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fileIO/controller/StudentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fileIO/controller/StudentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fileIO/model/service/StudentServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/fileIO/model/service/StudentServiceImpl.java" afterDir="false" />
-    </list>
+    <list default="true" id="193073cb-bb90-4cdf-a672-f36d6641c893" name="Changes" comment="Miniproject&#10;&#10;# Conflicts:&#10;#&#9;.idea/misc.xml&#10;#&#9;JavaMiniProjectSMS.iml&#10;#&#9;src/allFile/students.txt&#10;#&#9;src/fileIO/Main.java&#10;#&#9;src/fileIO/controller/StudentController.java&#10;#&#9;src/fileIO/model/Student.java&#10;#&#9;src/fileIO/model/service/StudentService.java&#10;#&#9;src/fileIO/model/service/StudentServiceImpl.java" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
